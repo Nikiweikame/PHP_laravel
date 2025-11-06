@@ -75,14 +75,12 @@ export const useUiStore = defineStore('ui', () => {
   const showRecordDialog = ref(false)
   const RecordModel = ref<'add' | 'modify' | 'delete'>('add')
   const openRecordDialog = (model: 'add' | 'modify' | 'delete') => {
-    console.log(model)
     showRecordDialog.value = true
     RecordModel.value = model
   }
   const showItemDialog = ref(false)
   const ItemModel = ref<'add' | 'modify' | 'delete'>('add')
   const openItemDialog = (model: 'add' | 'modify' | 'delete') => {
-    console.log(model)
     showItemDialog.value = true
     ItemModel.value = model
   }

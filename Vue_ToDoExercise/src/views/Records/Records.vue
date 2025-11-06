@@ -21,25 +21,21 @@ onMounted(async () => {
 })
 const openModifyModel = (record: RecordsContent) => {
   uiStore.openRecordDialog('modify')
-  // console.log(id, itemId)
   exerciseRecordStore.setExerciseRecordForm(record)
 }
 const openAddModel = ()=>{
   uiStore.openRecordDialog('add')
-  // console.log(id, itemId)
   exerciseRecordStore.initExerciseRecordForm()
 }
 const alertDelete = async (id: number) => {
   const confirmed = await confirmDialog('確定要刪除此筆紀錄嗎？', '刪除後將無法復原！')
 
   if (!confirmed) {
-    console.log('使用者取消刪除')
     return
   }
 
   const success = await exerciseRecordStore.deleteExerciseRecord(id)
   if (success) {
-    console.log('刪除成功，重新載入資料')
     await exerciseRecordStore.updateRecords() // ✅ 更新成功後重新抓資料() 
   }
 }

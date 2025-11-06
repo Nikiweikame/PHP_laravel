@@ -19,7 +19,6 @@ function submitForm(event: Event) {
     form.reportValidity()
     return
   }
-  console.log('test',userStore.$state)
   // 驗證通過，送 API
   ApiStore.register()
 }

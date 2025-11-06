@@ -33,7 +33,6 @@ export const useUserApiStore = defineStore('userApi', () => {
 
   // 登入
   async function login() {
-    console.log('執行登入api', userStore.account, userStore.password)
     const myHeaders = createHeaders(false)
     const raw = JSON.stringify({
       user_id: userStore.account,
@@ -177,7 +176,6 @@ export const useUserApiStore = defineStore('userApi', () => {
       if (result.success) {
         userStore.securityQuestionsList = result.data
       }
-      console.log('API 安全性問題讀取成功', result, result.success, result.data)
     } catch (error) {
       console.error('安全性問題讀取失敗', error)
     }
@@ -201,7 +199,6 @@ export const useUserApiStore = defineStore('userApi', () => {
       const response = await fetch(RESTETPASSWORD_ENDPOINT, requestOptions)
       const result = await response.json()
       if (result.success) {
-        alertSuccess('密碼重設成功', result.message)
         uiStore.forgetPasswordNext('12qwAS')
       } else {
         console.warn('密碼重設失敗', result.message)

@@ -30,7 +30,6 @@ function complete() {
   closeDialog()
 }
 async function submitForm(event: Event) {
-  console.log(event, event.target)
   const form = event.target as HTMLFormElement
   if (!form.checkValidity()) {
     // 欄位沒填好，瀏覽器會自動顯示提示

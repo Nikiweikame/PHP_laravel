@@ -45,21 +45,17 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
       const result = await response.json()
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        console.warn('Token 已失效，登出中...')
         userStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return [] // 回傳空陣列和0卡路里
       }
 
       if (result.success) {
-        console.log('取得運動項目成功', result.data)
         return result.data as ItemsContent[]
       } else {
-        console.warn('取得運動項目失敗', result.message)
         return [] // 回傳空陣列
       }
     } catch (error) {
-      console.error('取得運動項目發生錯誤', error)
       return [] // 回傳空陣列
     }
   }
@@ -113,7 +109,6 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
       description: description.value,
       unit: unit.value,
     })
-    console.log(itemId.value, raw)
     const requestOptions: RequestInit = {
       method: 'PUT',
       headers: myHeaders,
@@ -126,24 +121,19 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
 
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        console.warn('Token 已失效，登出中...')
         userStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }
 
       if (result.success) {
-        console.log('更新運動項目成功', result.message)
         alertSuccess('更新運動項目成功', result.message)
         return true
       } else {
-        console.warn('更新運動項目失敗', result.message)
         alertError('更新運動項目失敗', result.message)
         return false
       }
     } catch (error: any) {
-      alertError('更新運動項目失敗', error.message)
-      console.error('更新運動項目發生錯誤', error)
       return false
     }
   }
@@ -157,7 +147,6 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
       description: description.value,
       unit: unit.value,
     })
-    console.log(raw)
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: myHeaders,
@@ -170,24 +159,20 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
 
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        console.warn('Token 已失效，登出中...')
         userStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }
 
       if (result.success) {
-        console.log('新增運動項目成功', result.message)
         alertSuccess('新增運動項目成功', result.message)
         return true
       } else {
-        console.warn('新增運動項目失敗', result.message)
         alertError('新增運動項目失敗', result.message)
         return false
       }
     } catch (error: any) {
       alertError('新增運動項目失敗', error.message)
-      console.error('新增運動項目發生錯誤', error)
       return false
     }
   }
@@ -206,24 +191,20 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
 
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        console.warn('Token 已失效，登出中...')
         userStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }
 
       if (result.success) {
-        console.log('刪除運動項目成功', result.message)
         alertSuccess('刪除運動項目成功', result.message)
         return true
       } else {
-        console.warn('刪除運動項目失敗', result.message)
         alertError('刪除運動項目失敗', result.message)
         return false
       }
     } catch (error: any) {
       alertError('刪除運動項目失敗', error.message)
-      console.error('刪除運動項目發生錯誤', error)
       return false
     }
   }

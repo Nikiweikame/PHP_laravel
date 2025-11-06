@@ -24,10 +24,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-  // 如果在根路徑 '/'
-  if (to.path === '/') {
-    return next('/login')
-  }
 
   // 如果頁面需要登入而使用者尚未登入
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {

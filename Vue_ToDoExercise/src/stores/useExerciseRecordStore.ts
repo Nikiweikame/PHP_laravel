@@ -61,15 +61,12 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       }
 
       if (result.success) {
-        console.log('取得運動紀錄成功', result.data)
         return [result.data.records as RecordsContent[], result.data.total_calories] // 回傳資料給 computed
       } else {
-        console.warn('取得運動紀錄失敗', result.message)
         total_calories.value = '0' // 更新總卡路里
         return [[], '0'] // 回傳空陣列和0卡路里
       }
     } catch (error) {
-      console.error('取得運動紀錄發生錯誤', error)
       return [[], '0'] // 回傳空陣列和0卡路里
     }
   }
@@ -155,7 +152,6 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
 
   // 載入既有數據
   const setExerciseRecordForm = (record: RecordsContent) => {
-    console.log(record, 'record')
     recordId.value = record.id.toString()
     calories.value = record.calories ?? 0
     count.value = record.count ?? 0
@@ -166,7 +162,6 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
     description.value = record.description
     formula.value = record.formula
     calories_per_unit.value = record.calories_per_unit
-    console.log(recordId.value, 'recordId.value')
   }
   // 初始化
   const initExerciseRecordForm = (exercise?: ItemsContent) => {
@@ -220,7 +215,6 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       unit: unit.value.replace(/[()]/g, ''),
       calories: calories.value,
     })
-    console.log(recordId.value, raw)
     const requestOptions: RequestInit = {
       method: 'PUT',
       headers: myHeaders,
@@ -240,17 +234,14 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       }
 
       if (result.success) {
-        console.log('更新運動紀錄成功', result.message)
         alertSuccess('更新運動紀錄成功', result.message)
         return true
       } else {
-        console.warn('更新運動紀錄失敗', result.message)
         alertError('更新運動紀錄失敗', result.message)
         return false
       }
     } catch (error: any) {
       alertError('更新運動紀錄失敗', error.message)
-      console.error('更新運動紀錄發生錯誤', error)
       return false
     }
   }
@@ -264,7 +255,6 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       unit: unit.value.replace(/[()]/g, ''),
       calories: calories.value,
     })
-    console.log(raw)
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: myHeaders,
@@ -284,17 +274,14 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       }
 
       if (result.success) {
-        console.log('新增運動紀錄成功', result.message)
         alertSuccess('新增運動紀錄成功', result.message)
         return true
       } else {
-        console.warn('新增運動紀錄失敗', result.message)
         alertError('新增運動紀錄失敗', result.message)
         return false
       }
     } catch (error: any) {
       alertError('新增運動紀錄失敗', error.message)
-      console.error('新增運動紀錄發生錯誤', error)
       return false
     }
   }
@@ -320,16 +307,13 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       }
 
       if (result.success) {
-        console.log('刪除運動紀錄成功', result.message)
         alertSuccess('刪除運動紀錄成功', result.message)
         return true
       } else {
-        console.warn('刪除運動紀錄失敗', result.message)
         alertError('刪除運動紀錄失敗', result.message)
         return false
       }
     } catch (error: any) {
-      alertError('刪除運動紀錄失敗', error.message)
       console.error('刪除運動紀錄發生錯誤', error)
       return false
     }

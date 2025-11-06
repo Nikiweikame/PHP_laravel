@@ -35,17 +35,14 @@ const openAddModel = () => {
   exerciseItemStore.initExerciseItemForm()
 }
 const alertDelete = async (id: number) => {
-  console.log(id)
   const confirmed = await confirmDialog('確定要刪除此筆運動項目嗎？', '刪除後將無法復原！')
 
   if (!confirmed) {
-    console.log('使用者取消刪除')
     return
   }
 
   const success = await exerciseItemStore.deleteExerciseItem(id)
   if (success) {
-    console.log('刪除成功，重新載入資料')
     await exerciseItemStore.updateItems() // ✅ 更新成功後重新抓資料()
   }
 }

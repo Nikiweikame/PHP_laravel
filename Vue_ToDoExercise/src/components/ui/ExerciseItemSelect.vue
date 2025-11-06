@@ -21,9 +21,7 @@ const emit = defineEmits(['update:modelValue'])
 function onChange(event: Event) {
   const select = event.target as HTMLSelectElement
   const selectedOption = select.selectedOptions[0] as HTMLOptionElement
-  console.log(selectedOption.value, 'selectedOption')
   const value = Number(selectedOption.value)
-  console.log(exerciseRecordStore.recordExerciseId, 'recordExerciseId')
   emit('update:modelValue', value) // 更新父組件或 Pinia
   exerciseRecordStore.updateFromOption(selectedOption)
 }
