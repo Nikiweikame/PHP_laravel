@@ -18,7 +18,8 @@ return new class extends Migration
             $table->decimal('calories_per_unit', 6, 2); // 每單位消耗卡路里
             $table->string('unit', 100); // 單位
             $table->text('description')->nullable(); // 說明，可為空
-            $table->string('updated_by', 50); // 更新人
+            $table->string('creator', 50); // 更新人
+            $table->softDeletes(); // 新增 deleted_at 欄位
             $table->timestamps(); // created_at, updated_at
         });
     }

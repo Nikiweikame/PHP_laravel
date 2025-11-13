@@ -20,8 +20,8 @@ class UserSeeder extends Seeder
             'security_question_id' => 1, // 假設這是第一個安全問題的 ID
             'answer_hash' => bcrypt('龜'), // 假設答案是寵
             'status' => 'active',
-            'last_login_at' => now(),
-            'password_change_at' => now(),
+            'lastLogin_at' => now(),
+            'passwordChange_at' => now(),
         ]);
     }
 }

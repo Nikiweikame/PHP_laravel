@@ -20,8 +20,9 @@ return new class extends Migration
             $table->foreignId('security_question_id')->constrained('security_questions')->onDelete('cascade'); // 安全提問，外鍵，參考 security_questions 表的 id 欄位
             $table->string('answer_hash'); // 加密後的答案
             $table->enum('status', ['active', 'inactive', 'pending']); // 帳號狀態
-            $table->dateTime('last_login_at')->nullable(); // 最後登入時間，可為空
-            $table->dateTime('password_change_at')->nullable(); // 密碼變更時間，可為空
+            $table->dateTime('lastLogin_at')->nullable(); // 最後登入時間，可為空
+            $table->dateTime('passwordChange_at')->nullable(); // 密碼變更時間，可為空
+            $table->boolean('isDefaultPassword')->default(false);
             $table->timestamps(); // created_at, updated_at
         });
     }

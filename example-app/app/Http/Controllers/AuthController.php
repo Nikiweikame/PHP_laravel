@@ -38,7 +38,7 @@ class AuthController extends Controller
 
         // 登入成功，回傳 token + user
         $user = auth()->user(); // 取得登入的使用者
-        $user->last_login_at = now();
+        $user->lastLogin_at = now();
         $user->save();
 
         // 判斷是否預設密碼
@@ -46,8 +46,8 @@ class AuthController extends Controller
 
         // 判斷密碼是否超過 90 天
         $needsPasswordChange = false;
-        if ($user->password_change_at && ! $isDefaultPassword) {
-            $daysSinceChange = now()->diffInDays($user->password_change_at);
+        if ($user->passwordChange_at && ! $isDefaultPassword) {
+            $daysSinceChange = now()->diffInDays($user->passwordChange_at);
             if ($daysSinceChange >= 90) {
                 $needsPasswordChange = true;
             }
@@ -128,8 +128,8 @@ class AuthController extends Controller
                 'security_question_id' => $validated['security_question_id'],
                 'answer_hash' => bcrypt($validated['security_answer']), // bcrypt 加密
                 'status' => 'active',
-                'last_login_at' => null,
-                'password_change_at' => now(), // 註冊時預設密碼設定時間
+                'lastLogin_at' => null,
+                'passwordChange_at' => now(), // 註冊時預設密碼設定時間
             ]);
 
             // 註冊完成馬上登入並回傳 token
@@ -229,7 +229,7 @@ class AuthController extends Controller
         $newPasswordPlain = '12qwAS';
         $user->is_default_password = true;
         $user->password = Hash::make($newPasswordPlain);
-        $user->password_change_at = now();
+        $user->passwordChange_at = now();
         $user->save();
 
         // ⚠️ 不建議回傳明碼，只顯示提示
@@ -256,7 +256,7 @@ class AuthController extends Controller
 
         // ✅ 沿用舊密碼
         if (! empty($validated['renew']) && $validated['renew'] == true) {
-            $user->password_change_at = now();
+            $user->passwordChange_at = now();
             $user->is_default_password = false;
             $user->save();
 
@@ -274,7 +274,7 @@ class AuthController extends Controller
 
             $user->password = Hash::make($validated['new_password']);
             $user->is_default_password = false;
-            $user->password_change_at = now();
+            $user->passwordChange_at = now();
             $user->save();
 
             return response()->json([
@@ -298,7 +298,7 @@ class AuthController extends Controller
         //     return response()->json(['success' => false, 'message' => '密碼錯誤'], 403);
         // }
 
-        $user->password_change_at = now();
+        $user->passwordChange_at = now();
         $user->is_default_password = false;
         $user->save();
 
@@ -323,7 +323,7 @@ class AuthController extends Controller
 
         $user->password = Hash::make($validated['new_password']);
         $user->is_default_password = false;
-        $user->password_change_at = now();
+        $user->passwordChange_at = now();
         $user->save();
 
         return response()->json([

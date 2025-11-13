@@ -23,7 +23,7 @@ class User extends Authenticatable implements JWTSubject // ✅ implements JWTSu
      * @var list<string>
      */
     protected $fillable = [
-        'user_id', 'password', 'nickname', 'weight', 'security_question_id', 'answer_hash', 'status', 'last_login_at', 'password_change_at',
+        'user_id', 'password', 'nickname', 'weight', 'security_question_id', 'answer_hash', 'status', 'lastLogin_at', 'passwordChange_at',
     ];
 
     /**
@@ -48,8 +48,8 @@ class User extends Authenticatable implements JWTSubject // ✅ implements JWTSu
     protected function casts(): array
     {
         return [
-            'last_login_at' => 'datetime',
-            'password_change_at' => 'datetime',
+            'lastLogin_at' => 'datetime',
+            'passwordChange_at' => 'datetime',
             'weight' => 'decimal:2',
         ];
     }
