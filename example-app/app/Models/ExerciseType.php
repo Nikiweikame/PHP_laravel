@@ -19,6 +19,10 @@ class ExerciseType extends Model
      */
     protected $fillable = ['name', 'weight_unit', 'calories_per_unit', 'description', 'unit', 'creator'];
 
+    protected $casts = [
+        'weight_unit' => 'boolean',
+    ];
+
     /**
      * The table associated with the model.
      *

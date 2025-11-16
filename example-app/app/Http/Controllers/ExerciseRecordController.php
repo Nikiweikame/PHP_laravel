@@ -59,7 +59,7 @@ class ExerciseRecordController extends Controller
                 $exerciseType = $record->exerciseType;
                 // 計算 formula（注意 exerciseType 可能是 null）
                 if ($exerciseType) {
-                    if ($exerciseType->weight_unit === 'Y') {
+                    if ($exerciseType->weight_unit) {
                         $formula = '體重 × '.$exerciseType->unit.' × '.$exerciseType->calories_per_unit;
                     } else {
                         $formula = $exerciseType->unit.' × '.$exerciseType->calories_per_unit;

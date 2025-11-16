@@ -23,7 +23,7 @@ class ExerciseTypeController extends Controller
 
         $types = ExerciseType::all()->map(function ($type) use ($user) {
             // 根據 weight_unit 決定公式
-            if ($type->weight_unit === 'Y') {
+            if ($type->weight_unit) {
                 $formula = '體重 × '.$type->unit.' × '.$type->calories_per_unit;
             } else {
                 $formula = $type->unit.' × '.$type->calories_per_unit;
@@ -104,7 +104,7 @@ class ExerciseTypeController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:exercise_types,name,'.$id,
-            'weight_unit' => 'required|string|max:1',
+            'weight_unit' => 'required|boolean',
             'calories_per_unit' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'unit' => 'required|string|max:100',

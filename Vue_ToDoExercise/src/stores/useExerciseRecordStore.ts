@@ -176,7 +176,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       unit.value = `(${exercise.unit})`
       description.value = exercise.description ?? ''
       formula.value = exercise.formula
-      weight_unit.value = exercise.weight_unit === 'Y'
+      weight_unit.value = exercise.weight_unit 
       calories_per_unit.value = exercise.calories_per_unit
     } else {
       recordExerciseId.value = '0'
@@ -193,7 +193,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
     unit.value = `(${option.dataset.unit ?? 'error'})`
     formula.value = option.dataset.formula ?? 'error'
     description.value = option.dataset.description ?? 'error'
-    weight_unit.value = option.dataset.weight_unit === 'Y'
+    weight_unit.value = option.dataset.weight_unit === 'true'
     calories_per_unit.value = (option.dataset.calories_per_unit ?? 0) as number
     // 計算卡路里
     calculateCalories()

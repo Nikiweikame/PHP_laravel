@@ -12,7 +12,7 @@ import { alertError, alertSuccess } from '@/utils/alert'
 export interface ItemsContent {
   id: number
   name: string
-  weight_unit: string
+  weight_unit: boolean
   calories_per_unit: number
   unit: string
   description: string
@@ -86,7 +86,7 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
     unit.value = item.unit
     calories_per_unit.value = item.calories_per_unit
     description.value = item.description
-    weight_unit.value = item.weight_unit === 'Y'
+    weight_unit.value = item.weight_unit 
     name.value = item.name
     formula.value = item.formula
   }
@@ -104,7 +104,7 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
     const myHeaders = ApiStore.createHeaders(true)
     const raw = JSON.stringify({
       name: name.value,
-      weight_unit: weight_unit.value ? 'Y' : 'N',
+      weight_unit: weight_unit.value ? true : false,
       calories_per_unit: calories_per_unit.value,
       description: description.value,
       unit: unit.value,
@@ -142,7 +142,7 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
     const myHeaders = ApiStore.createHeaders(true)
     const raw = JSON.stringify({
       name: name.value,
-      weight_unit: weight_unit.value ? 'Y' : 'N',
+      weight_unit: weight_unit.value ? true : false,
       calories_per_unit: calories_per_unit.value,
       description: description.value,
       unit: unit.value,
