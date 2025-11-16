@@ -2,79 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    // 登入
+    protected $authService;
 
-    public function login(Request $request)
+    public function __construct(AuthService $authService)
     {
-        $credentials = $request->validate([
-            'user_id' => 'required|string',
-            'password' => 'required|string',
-        ]);
+        $this->authService = $authService;
+    }
 
-        try {
-            // 嘗試登入並產生 JWT token
-            if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json([
-                    'success' => false,
-                    'data' => null,
-                    'message' => 'Invalid credentials',
-                ], 401);
-            }
-        } catch (JWTException $e) {
-            return response()->json([
-                'success' => false,
-                'data' => null,
-                'message' => 'Could not create token',
-            ], 500);
-        }
+    // 登入
+    public function login(LoginRequest $request)
+    {
+        // 型別驗證
+        $credentials = $request->validated();
 
-        // 登入成功，回傳 token + user
-        $user = auth()->user(); // 取得登入的使用者
-        $user->lastLogin_at = now();
-        $user->save();
-
-        // 判斷是否預設密碼
-        $isDefaultPassword = $user->is_default_password;
-
-        // 判斷密碼是否超過 90 天
-        $needsPasswordChange = false;
-        if ($user->passwordChange_at && ! $isDefaultPassword) {
-            $daysSinceChange = now()->diffInDays($user->passwordChange_at);
-            if ($daysSinceChange >= 90) {
-                $needsPasswordChange = true;
-            }
-        }
-
-        // 密碼狀態
-        $passwordStatus = 'ok';
-        if ($isDefaultPassword) {
-            $passwordStatus = 'default';
-        } elseif ($needsPasswordChange) {
-            $passwordStatus = 'expired';
-        }
-
-        // 使用 UserResource 格式化使用者資料
-        $Resource = new UserResource($user);
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60,
-                'user' => $Resource,
-                'password_status' => $passwordStatus,
-            ],
-            'message' => 'Login successful',
-        ]);
+        return response()->json($this->authService->login($credentials));
     }
 
     /**
@@ -128,8 +77,8 @@ class AuthController extends Controller
                 'security_question_id' => $validated['security_question_id'],
                 'answer_hash' => bcrypt($validated['security_answer']), // bcrypt 加密
                 'status' => 'active',
-                'lastLogin_at' => null,
-                'passwordChange_at' => now(), // 註冊時預設密碼設定時間
+                'last_login_at' => null,
+                'password_change_at' => now(), // 註冊時預設密碼設定時間
             ]);
 
             // 註冊完成馬上登入並回傳 token
@@ -229,7 +178,7 @@ class AuthController extends Controller
         $newPasswordPlain = '12qwAS';
         $user->is_default_password = true;
         $user->password = Hash::make($newPasswordPlain);
-        $user->passwordChange_at = now();
+        $user->password_change_at = now();
         $user->save();
 
         // ⚠️ 不建議回傳明碼，只顯示提示
@@ -256,7 +205,7 @@ class AuthController extends Controller
 
         // ✅ 沿用舊密碼
         if (! empty($validated['renew']) && $validated['renew'] == true) {
-            $user->passwordChange_at = now();
+            $user->password_change_at = now();
             $user->is_default_password = false;
             $user->save();
 
@@ -274,7 +223,7 @@ class AuthController extends Controller
 
             $user->password = Hash::make($validated['new_password']);
             $user->is_default_password = false;
-            $user->passwordChange_at = now();
+            $user->password_change_at = now();
             $user->save();
 
             return response()->json([
@@ -298,7 +247,7 @@ class AuthController extends Controller
         //     return response()->json(['success' => false, 'message' => '密碼錯誤'], 403);
         // }
 
-        $user->passwordChange_at = now();
+        $user->password_change_at = now();
         $user->is_default_password = false;
         $user->save();
 
@@ -323,7 +272,7 @@ class AuthController extends Controller
 
         $user->password = Hash::make($validated['new_password']);
         $user->is_default_password = false;
-        $user->passwordChange_at = now();
+        $user->password_change_at = now();
         $user->save();
 
         return response()->json([

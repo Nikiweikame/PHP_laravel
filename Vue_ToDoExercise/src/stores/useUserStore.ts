@@ -115,6 +115,8 @@ export const useUserStore = defineStore('user', {
       } else if (typesCount === 3) {
         // 同時有大小寫與數字 → 強
         this.strength = 'strong'
+
+
       }
     },
   },

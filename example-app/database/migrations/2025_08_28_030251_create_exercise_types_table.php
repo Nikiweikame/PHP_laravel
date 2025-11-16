@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('exercise_types', function (Blueprint $table) {
             $table->id(); // id INT AUTO_INCREMENT PRIMARY KEY
-            $table->string('name', 100); // 運動名稱
-            $table->string('weight_unit', 1); // 是否要計算體重
+            $table->string('name', 100); //
+            $table->boolean('weight_unit')->default(false); // 是否要計算體重
             $table->decimal('calories_per_unit', 6, 2); // 每單位消耗卡路里
             $table->string('unit', 100); // 單位
             $table->text('description')->nullable(); // 說明，可為空

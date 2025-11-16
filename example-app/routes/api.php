@@ -33,15 +33,15 @@ Route::middleware('jwt.auth')->group(function () {
     Route::put('/password/update', [AuthController::class, 'updatePassword']);
     Route::post('/password/renew', [AuthController::class, 'renewPassword']);
     // exercise records
-    Route::get('/exerciseRecords', [ExerciseRecordController::class, 'index']);
-    Route::post('/exerciseRecords', [ExerciseRecordController::class, 'store']);
-    Route::put('/exerciseRecords/{id}', [ExerciseRecordController::class, 'update']);
-    Route::delete('/exerciseRecords/{id}', [ExerciseRecordController::class, 'destroy']);
+    Route::get('/exercise-records', [ExerciseRecordController::class, 'index']);
+    Route::post('/exercise-records', [ExerciseRecordController::class, 'store']);
+    Route::put('/exercise-records/{id}', [ExerciseRecordController::class, 'update']);
+    Route::delete('/exercise-records/{id}', [ExerciseRecordController::class, 'destroy']);
     // exercise types
-    Route::get('/exerciseTypes', [ExerciseTypeController::class, 'index']);
-    Route::post('/exerciseTypes', [ExerciseTypeController::class, 'store']);
-    Route::put('/exerciseTypes/{id}', [ExerciseTypeController::class, 'update']);
-    Route::delete('/exerciseTypes/{id}', [ExerciseTypeController::class, 'destroy']);
+    Route::get('/exercise-types', [ExerciseTypeController::class, 'index']);
+    Route::post('/exercise-types', [ExerciseTypeController::class, 'store']);
+    Route::put('/exercise-types/{id}', [ExerciseTypeController::class, 'update']);
+    Route::delete('/exercise-types/{id}', [ExerciseTypeController::class, 'destroy']);
 });
 
 // Route::apiResource('users', UserController::class);
