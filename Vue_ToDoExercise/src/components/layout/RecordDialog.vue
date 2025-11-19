@@ -3,15 +3,22 @@ import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useUiStore } from '@/stores/useUiStore'
 import { useExerciseRecordStore } from '@/stores/useExerciseRecordStore'
+import { useExerciseItemStore } from '@/stores/useExerciseItemStore'
 import ExerciseItemSelect from '../ui/ExerciseItemSelect.vue'
+import { onMounted } from 'vue'
 
 const uiStore = useUiStore()
 const exerciseRecordStore = useExerciseRecordStore()
+const exerciseItemStore = useExerciseItemStore()
 
 function closeDialog() {
   uiStore.showRecordDialog = false
 }
-
+onMounted(() => {
+  if(exerciseItemStore.itemsContent.length === 0){
+    exerciseItemStore.updateItems()
+  }
+})
 async function submitForm(event: Event) {
   const form = event.target as HTMLFormElement
   if (!form.checkValidity()) {

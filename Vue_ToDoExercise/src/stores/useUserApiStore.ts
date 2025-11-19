@@ -73,7 +73,7 @@ export const useUserApiStore = defineStore('userApi', () => {
           return
         }
         alertSuccess('登入成功', '歡迎回來！')
-        userStore.router.push('/')
+        userStore.router.push('/records')
       } else {
         alertWarning('登入失敗', result.message || '請檢查帳號密碼是否正確')
       }

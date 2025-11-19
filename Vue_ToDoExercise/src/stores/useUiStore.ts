@@ -12,7 +12,7 @@ export const useUiStore = defineStore('ui', () => {
   const navItems = [
     { label: '登入', figure: 'login', path: '/login', auth: false },
     { label: '註冊', figure: 'person_add', path: '/register', auth: false },
-    { label: '運動紀錄', figure: 'directions_run', path: '/', auth: true },
+    { label: '運動紀錄', figure: 'directions_run', path: '/records', auth: true },
     { label: '運動項目', figure: 'list_alt', path: '/items', auth: true },
     { label: '個人檔案', figure: 'person', path: '/profile', auth: true },
   ]

@@ -13,11 +13,7 @@ defineProps({
   },
 })
 
-const items = [
-  { label: '運動紀錄', path: '/' },
-  { label: '運動項目', path: '/records' },
-  { label: '個人資料', path: '/profile' },
-]
+
 </script>
 <template>
   <a class="d-flex gap-3 nav-item" href="#">

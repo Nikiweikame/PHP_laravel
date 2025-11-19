@@ -46,7 +46,7 @@ async function submitForm(event: Event) {
         />
       </div>
       <div class="col-12 mb-3 text-center">
-        <RouterLink to="/" class="link">
+        <RouterLink to="/records" class="link">
           <BaseButton label="取消" class="cancel" />
         </RouterLink>
         <BaseButton label="修改個人資料" type="submit" class="primary" />

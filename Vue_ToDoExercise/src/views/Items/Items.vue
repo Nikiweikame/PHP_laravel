@@ -22,7 +22,7 @@ onMounted(async () => {
 })
 
 const openRecordAddModel = (item: ItemsContent) => {
-  router.push('/')
+  router.push('/records')
   uiStore.openRecordDialog('add')
   exerciseRecordStore.initExerciseRecordForm(item)
 }

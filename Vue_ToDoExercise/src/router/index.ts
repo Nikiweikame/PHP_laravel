@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
 
+import Homeview from '@/views/Home.vue'
 import RegisterView from '@/views/Register/RegisterView.vue'
 import RecordsView from '@/views/Records/RecordsView.vue'
 import LoginView from '@/views/Login/LoginView.vue'
@@ -9,7 +10,8 @@ import ProfileView from '@/views/Profile/ProfileView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
 const routes: Array<RouteRecordRaw> = [
-  { path: '/', name: 'Records', component: RecordsView, meta: { requiresAuth: true } },
+  { path: '/', name: 'Home', component: Homeview },
+  { path: '/records', name: 'Records', component: RecordsView, meta: { requiresAuth: true } },
   { path: '/login', name: 'Login', component: LoginView },
   { path: '/items', name: 'Items', component: ItemsView, meta: { requiresAuth: true } },
   { path: '/register', name: 'Register', component: RegisterView },
@@ -29,7 +31,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
     next('/login') // 👈 導回登入頁
   } else if ((to.path === '/login' || to.path === '/register') && userStore.isLoggedIn) {
-    next('/') // 已登入就導回首頁
+    next('/records') // 已登入就導回首頁
   } else {
     next()
   }
