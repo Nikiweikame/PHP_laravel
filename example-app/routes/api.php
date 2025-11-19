@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/reset-password', [AuthController::class, 'resetPasswordBySecurityQuestion']);
+Route::post('/reset-password', [AuthController::class, 'resetPasswordWithSecurityQuestion']);
 Route::get('/securityQuestion', [SecurityQuestionController::class, 'index']);
 
 // 需要 JWT 驗證的路由
