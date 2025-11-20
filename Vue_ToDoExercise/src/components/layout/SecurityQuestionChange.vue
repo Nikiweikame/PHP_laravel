@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -13,6 +13,10 @@ const emit = defineEmits(['update:modelValue'])
 const userStore = useUserStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
+
+onMounted(() => {
+  ApiStore.getSecurityQuestions()
+})
 
 function closeDialog() {
   userStore.clearSecurityInfo()

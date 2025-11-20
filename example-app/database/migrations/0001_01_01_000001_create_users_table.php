@@ -22,7 +22,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive', 'pending']); // 帳號狀態
             $table->dateTime('last_login_at')->nullable(); // 最後登入時間，可為空
             $table->dateTime('password_change_at')->nullable(); // 密碼變更時間，可為空
-            $table->boolean('isDefaultPassword')->default(false);
+            $table->boolean('is_default_password')->default(false);
             $table->timestamps(); // created_at, updated_at
         });
     }

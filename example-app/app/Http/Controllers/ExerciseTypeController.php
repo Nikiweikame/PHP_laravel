@@ -54,7 +54,7 @@ class ExerciseTypeController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:exercise_types,name',
-            'weight_unit' => 'required|string|max:1',
+            'weight_unit' => 'required|boolean',
             'calories_per_unit' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'unit' => 'required|string|max:100',

@@ -10,6 +10,7 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  base: './', // ← 這行很重要，保證靜態檔案路徑正確
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

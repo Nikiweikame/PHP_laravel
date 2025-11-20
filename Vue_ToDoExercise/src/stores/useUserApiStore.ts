@@ -14,6 +14,7 @@ import {
 import { useUserStore } from '@/stores/useUserStore'
 import { useUiStore } from './useUiStore'
 import { alertSuccess, alertWarning, alertError } from '@/utils/alert'
+import { useRouter } from 'vue-router'
 
 interface TokenStatus {
   expired: boolean
@@ -30,6 +31,7 @@ interface UpdateData {
 export const useUserApiStore = defineStore('userApi', () => {
   const userStore = useUserStore()
   const uiStore = useUiStore()
+  const router = useRouter()
 
   // 登入
   async function login() {
@@ -68,12 +70,12 @@ export const useUserApiStore = defineStore('userApi', () => {
         if (data.password_status !== 'ok') {
           const warningTitle = data.password_status === 'expired' ? '密碼已過期' : '密碼為預設密碼'
           alertWarning(warningTitle, '請前往個人檔案頁面更新密碼')
-          userStore.router.push('/profile')
+          router.push('/profile')
           uiStore.togglePasswordModel()
           return
         }
         alertSuccess('登入成功', '歡迎回來！')
-        userStore.router.push('/records')
+        router.push('/records')
       } else {
         alertWarning('登入失敗', result.message || '請檢查帳號密碼是否正確')
       }
@@ -122,7 +124,7 @@ export const useUserApiStore = defineStore('userApi', () => {
         userStore.account = ''
         userStore.password = ''
         alertSuccess('註冊成功', '歡迎加入！')
-        userStore.router.push('/')
+        router.push('/')
         return
       } else {
         alertWarning('註冊失敗', result.message || '伺服器未正常回應')
@@ -160,7 +162,7 @@ export const useUserApiStore = defineStore('userApi', () => {
       // ✅ 無論 API 成功與否都要清除資料
       userStore.reset() // 會重置到 state 初始值
       localStorage.removeItem('user') // 清除保存的狀態
-      userStore.router.push('/login')
+      router.push('/login')
     }
   }
   async function getSecurityQuestions() {
@@ -251,7 +253,7 @@ export const useUserApiStore = defineStore('userApi', () => {
       if (tokenStatus.expired) {
         alertWarning('資料更新失敗', tokenStatus.message)
         userStore.reset()
-        userStore.router.push('/login')
+        router.push('/login')
         return
       }
       const result = await response.json()
@@ -287,7 +289,7 @@ export const useUserApiStore = defineStore('userApi', () => {
       if (tokenStatus.expired) {
         alertWarning('密碼更新失敗', tokenStatus.message)
         userStore.reset()
-        userStore.router.push('/login')
+        router.push('/login')
         return
       }
       const result = await response.json()
@@ -322,14 +324,14 @@ export const useUserApiStore = defineStore('userApi', () => {
       if (tokenStatus.expired) {
         alertWarning('密碼更新失敗', tokenStatus.message)
         userStore.reset()
-        userStore.router.push('/login')
+        router.push('/login')
         return
       }
       const result = await response.json()
       if (result.success) {
         alertSuccess('密碼更新成功', '請使用新密碼重新登入')
         userStore.reset() // 清掉 token / 使用者資料
-        userStore.router.push('/login')
+        router.push('/login')
       } else {
         console.warn('密碼更新失敗', result.message)
         alertError('密碼更新失敗', result.message)

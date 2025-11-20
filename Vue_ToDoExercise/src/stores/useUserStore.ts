@@ -11,76 +11,74 @@ interface SecurityQuestion {
   security_question: string
 }
 // const router = useRouter()
-export const useUserStore = defineStore('user', {
-  state: () => ({
+
+export const useUserStore = defineStore(
+  'user',
+  () => {
     // 登入輸入欄位
-    account: '', // 登入輸入用帳號
-    password: '',
-    newPassword: '',
+    const account = ref('') // 登入輸入用帳號
+    const password = ref('')
+    const newPassword = ref('')
 
     // 顯示用（側邊欄、header）
-    nickname: '',
-    originNickname: '',
-    asideAccount: 'John Doe', // 顯示使用者名稱（登入後會更新）
-    asideNickname: '訪客', // 顯示使用者暱稱（登入後會更新）
-    weight: 0,
-    originWeight: 0,
+    const nickname = ref('')
+    const originNickname = ref('')
+    const asideAccount = ref('John Doe') // 顯示使用者名稱（登入後會更新）
+    const asideNickname = ref('訪客') // 顯示使用者暱稱（登入後會更新）
+    const weight = ref(0)
+    const originWeight = ref(0)
 
     // 安全性設定
-    securityQuestion: '1',
-    securityAnswer: '',
-    strength: 'weak',
+    const securityQuestion = ref('1')
+    const securityAnswer = ref('')
+    const strength = ref('weak')
 
     // 登入狀態與 Token
-    isLoggedIn: false,
-    token: ref<string | null>(localStorage.getItem('token')),
-
-    // API 基本設定
-    apiUrl: 'http://127.0.0.1:8000/api',
+    const isLoggedIn = ref(false)
+    const token = ref<string | null>(localStorage.getItem('token'))
 
     // 額外資料
-    securityQuestionsList: [] as SecurityQuestion[],
-    router: useRouter(),
-  }),
+    const securityQuestionsList = ref<SecurityQuestion[]>([])
+    const router = useRouter()
 
-  actions: {
     /** 重設所有欄位（登出或清除資料時用） */
-    reset() {
-      this.account = ''
-      this.password = ''
-      this.newPassword = ''
-      this.nickname = ''
-      this.originNickname = ''
-      this.asideAccount = 'John Doe'
-      this.asideNickname = '訪客'
-      this.weight = 0
-      this.originWeight = 0
-      this.securityQuestion = '1'
-      this.securityAnswer = ''
-      this.strength = 'weak'
-      this.isLoggedIn = false
-      this.token = ''
+    function reset() {
+      account.value = ''
+      password.value = ''
+      newPassword.value = ''
+      nickname.value = ''
+      originNickname.value = ''
+      asideAccount.value = 'John Doe'
+      asideNickname.value = '訪客'
+      weight.value = 0
+      originWeight.value = 0
+      securityQuestion.value = '1'
+      securityAnswer.value = ''
+      strength.value = 'weak'
+      isLoggedIn.value = false
+      token.value = ''
+
       const exerciseItemStore = useExerciseItemStore()
-      exerciseItemStore.itemsContent = []
       const exerciseRecordStore = useExerciseRecordStore()
+      exerciseItemStore.itemsContent = []
       exerciseRecordStore.recordsContent = []
-    },
-    resetProfileData() {
-      this.nickname = this.originNickname
-      this.weight = this.originWeight
-    },
-    updateProfileDate() {
-      this.originNickname = this.nickname
-      this.originWeight = this.weight
-      this.asideNickname = this.nickname
-    },
-    clearSecurityInfo() {
-      this.securityQuestion = '1'
-      this.securityAnswer = ''
-      this.password = ''
-      this.newPassword = ''
-      this.strength = 'weak'
-    },
+    }
+    function resetProfileData() {
+      nickname.value = originNickname.value
+      weight.value = originWeight.value
+    }
+    function updateProfileDate() {
+      originNickname.value = nickname.value
+      originWeight.value = weight.value
+      asideNickname.value = nickname.value
+    }
+    function clearSecurityInfo() {
+      securityQuestion.value = '1'
+      securityAnswer.value = ''
+      password.value = ''
+      newPassword.value = ''
+      strength.value = 'weak'
+    }
 
     /**
      * 密碼強度檢測函式
@@ -89,8 +87,8 @@ export const useUserStore = defineStore('user', {
      *  - 含兩種型態 → 中 (medium)
      *  - 同時有 大寫 + 小寫 + 數字 → 強 (strong)
      */
-    checkStrength() {
-      const pw = this.newPassword
+    function checkStrength() {
+      const pw = newPassword.value
 
       // 檢查是否包含小寫字母
       const hasLower = /[a-z]/.test(pw)
@@ -105,28 +103,53 @@ export const useUserStore = defineStore('user', {
       // 根據種類數決定強度
       if (pw.length === 0) {
         // 空密碼視為弱
-        this.strength = 'weak'
+        strength.value = 'weak'
       } else if (typesCount === 1) {
         // 只有一種型態（純數字、純英文）→ 弱
-        this.strength = 'weak'
+        strength.value = 'weak'
       } else if (typesCount === 2) {
         // 兩種型態（大小寫、有字母有數字但不全）→ 中
-        this.strength = 'medium'
+        strength.value = 'medium'
       } else if (typesCount === 3) {
         // 同時有大小寫與數字 → 強
-        this.strength = 'strong'
-
-
+        strength.value = 'strong'
       }
-    },
+    }
+    return {
+      account,
+      password,
+      newPassword,
+      nickname,
+      originNickname,
+      asideAccount,
+      asideNickname,
+      weight,
+      originWeight,
+      securityQuestion,
+      securityAnswer,
+      strength,
+      isLoggedIn,
+      token,
+      securityQuestionsList,
+      reset,
+      resetProfileData,
+      updateProfileDate,
+      clearSecurityInfo,
+      checkStrength,
+    }
   },
-
-  // 持久化設定
-  persist: {
+  {
     persist: {
       key: 'user', // localStorage 的 key 名稱
-      paths: ['isLoggedIn', 'token', 'displayName', 'nickname', 'weight'], // 要持久化的欄位
-      storage: localStorage, // 使用 localStorage 來存取
+      paths: [
+        'isLoggedIn',
+        'token',
+        'asideAccount',
+        'asideNickname',
+        'nickname',
+        'weight',
+      ], // 要持久化的欄位
+      storage: localStorage, // 使用 localStorage
     },
-  } as any, // TypeScript 目前對 pinia-plugin-persistedstate 支援不佳，暫時用 any 繞過
-})
+  } as any, // TypeScript 目前對 pinia-plugin-persistedstate 支援不佳，暫時用 any 繞過,
+)
