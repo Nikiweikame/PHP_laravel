@@ -10,6 +10,7 @@ export const useUiStore = defineStore('ui', () => {
 
   // 導覽項目集中管理
   const navItems = [
+    { label: '首頁', figure: 'home', path: '/' },
     { label: '登入', figure: 'login', path: '/login', auth: false },
     { label: '註冊', figure: 'person_add', path: '/register', auth: false },
     { label: '運動紀錄', figure: 'directions_run', path: '/records', auth: true },
@@ -18,7 +19,7 @@ export const useUiStore = defineStore('ui', () => {
   ]
   // 根據登入狀態自動過濾
   const filteredNavItems = computed(() =>
-    navItems.filter((item) => item.auth === userStore.isLoggedIn),
+    navItems.filter((item) => item.figure === 'home' || item.auth === userStore.isLoggedIn),
   )
 
   const forgetPasswordModel = ref(false)

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
 
-import Homeview from '@/views/Home.vue'
+import Homeview from '@/views/Home/HomeView.vue'
 import RegisterView from '@/views/Register/RegisterView.vue'
 import RecordsView from '@/views/Records/RecordsView.vue'
 import LoginView from '@/views/Login/LoginView.vue'
