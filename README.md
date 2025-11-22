@@ -1,1 +1,7 @@
 這是我的php laravel + vue3的side project
+
+目前實作了user的五層架構，從controller到DB都有實作
+還有FormRequest的DI連減輕controller的型別驗證的工作
+service負責商業邏輯，controller只負責接收與回傳
+最後前端的部分也打包好掛在php上面了
+算是第一次正式的接觸ORM的概念
