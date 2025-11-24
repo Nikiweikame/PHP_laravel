@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/useUserStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { useUserApiStore } from '@/stores/useUserApiStore';
 
 
 // 取得 store
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const ApiStore = useUserApiStore()
 </script>
 <template>

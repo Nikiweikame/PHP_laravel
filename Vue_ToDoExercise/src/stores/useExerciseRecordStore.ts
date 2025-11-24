@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { RECORDS_ENDPOINT } from '@/config/api'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from './useUiStore'
 import { useUserApiStore } from './useUserApiStore'
 import { useRouter } from 'vue-router'
@@ -27,7 +27,7 @@ export interface RecordsContent {
 }
 
 export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
-  const userStore = useUserStore()
+  const authStore = useAuthStore()
   const uiStore = useUiStore()
   const ApiStore = useUserApiStore()
   const exerciseItems = useExerciseItemStore()
@@ -55,7 +55,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       // 如果 token 過期或未授權
       if (response.status === 401) {
         console.warn('Token 已失效，登出中...')
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return [[], '0'] // 回傳空陣列和0卡路里
       }
@@ -200,7 +200,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
   }
   const calculateCalories = () => {
     if (weight_unit.value) {
-      calories.value = Number((userStore.weight * count.value * calories_per_unit.value).toFixed(2))
+      calories.value = Number((authStore.weight * count.value * calories_per_unit.value).toFixed(2))
     } else {
       calories.value = Number((count.value * calories_per_unit.value).toFixed(2))
     }
@@ -228,7 +228,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       // 如果 token 過期或未授權
       if (response.status === 401) {
         console.warn('Token 已失效，登出中...')
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }
@@ -268,7 +268,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       // 如果 token 過期或未授權
       if (response.status === 401) {
         console.warn('Token 已失效，登出中...')
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }
@@ -301,7 +301,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
       // 如果 token 過期或未授權
       if (response.status === 401) {
         console.warn('Token 已失效，登出中...')
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }

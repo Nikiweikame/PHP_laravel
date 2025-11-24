@@ -6,9 +6,9 @@ import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import NewPasswordInput from '@/components/ui/NewPasswordInput.vue'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUserApiStore } from '@/stores/useUserApiStore'
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const ApiStore = useUserApiStore()
 
 
@@ -33,7 +33,7 @@ function submitForm(event: Event) {
           id="account"
           type="text"
           placeholder="請輸入您的帳號"
-          v-model="userStore.account"
+          v-model="authStore.account"
         />
       </div>
       <div class="col-12 col-md-6 mb-3">
@@ -42,7 +42,7 @@ function submitForm(event: Event) {
           id="nickname"
           type="text"
           placeholder="請輸入您的暱稱"
-          v-model="userStore.nickname"
+          v-model="authStore.nickname"
         />
       </div>
       <div class="col-12 mb-3">
@@ -57,11 +57,11 @@ function submitForm(event: Event) {
           id="weight"
           type="number"
           placeholder="請輸入您的體重"
-          v-model="userStore.weight"
+          v-model="authStore.weight"
         />
       </div>
       <div class="col-12 mb-3">
-        <SecurityQuestionSelect v-model="userStore.securityQuestion" />
+        <SecurityQuestionSelect v-model="authStore.securityQuestion" />
       </div>
       <div class="col-12 mb-3">
         <BaseInput
@@ -69,7 +69,7 @@ function submitForm(event: Event) {
           id="security-answer"
           type="text"
           placeholder="請輸入您的答案"
-          v-model="userStore.securityAnswer"
+          v-model="authStore.securityAnswer"
         />
       </div>
       <div class="col-12 mb-3 text-center">

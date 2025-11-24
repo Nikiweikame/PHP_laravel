@@ -11,7 +11,7 @@ import {
   UPDATEPASSWORD_ENDPOINT,
   RESTETPASSWORD_ENDPOINT,
 } from '@/config/api'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from './useUiStore'
 import { alertSuccess, alertWarning, alertError } from '@/utils/alert'
 import { useRouter } from 'vue-router'
@@ -29,7 +29,7 @@ interface UpdateData {
   new_password?: string
 }
 export const useUserApiStore = defineStore('userApi', () => {
-  const userStore = useUserStore()
+  const authStore = useAuthStore()
   const uiStore = useUiStore()
   const router = useRouter()
 
@@ -37,8 +37,8 @@ export const useUserApiStore = defineStore('userApi', () => {
   async function login() {
     const myHeaders = createHeaders(false)
     const raw = JSON.stringify({
-      user_id: userStore.account,
-      password: userStore.password,
+      user_id: authStore.account,
+      password: authStore.password,
     })
 
     const requestOptions: RequestInit = {
@@ -54,19 +54,19 @@ export const useUserApiStore = defineStore('userApi', () => {
       if (result.success) {
         const data = result.data
         //  拿token
-        userStore.token = data.access_token
+        authStore.token = data.access_token
         // 取得使用者資料
         const user = data.user
-        userStore.nickname = user.nickname
-        userStore.originNickname = user.nickname
-        userStore.asideAccount = userStore.account
-        userStore.asideNickname = userStore.nickname
-        userStore.weight = user.weight
-        userStore.originWeight = user.weight
-        userStore.isLoggedIn = true
+        authStore.nickname = user.nickname
+        authStore.originNickname = user.nickname
+        authStore.asideAccount = authStore.account
+        authStore.asideNickname = authStore.nickname
+        authStore.weight = user.weight
+        authStore.originWeight = user.weight
+        authStore.isLoggedIn = true
         //  登入表單欄位清空
-        userStore.account = ''
-        userStore.password = ''
+        authStore.account = ''
+        authStore.password = ''
         if (data.password_status !== 'ok') {
           const warningTitle = data.password_status === 'expired' ? '密碼已過期' : '密碼為預設密碼'
           alertWarning(warningTitle, '請前往個人檔案頁面更新密碼')
@@ -90,12 +90,12 @@ export const useUserApiStore = defineStore('userApi', () => {
       const myHeaders = createHeaders(false)
 
       const raw = JSON.stringify({
-        user_id: userStore.account,
-        password: userStore.newPassword,
-        nickname: userStore.nickname,
-        weight: userStore.weight,
-        security_question_id: userStore.securityQuestion,
-        security_answer: userStore.securityAnswer,
+        user_id: authStore.account,
+        password: authStore.newPassword,
+        nickname: authStore.nickname,
+        weight: authStore.weight,
+        security_question_id: authStore.securityQuestion,
+        security_answer: authStore.securityAnswer,
       })
 
       const requestOptions: RequestInit = {
@@ -110,19 +110,19 @@ export const useUserApiStore = defineStore('userApi', () => {
       if (result.success) {
         const data = result.data
         //  拿token
-        userStore.token = data.access_token
+        authStore.token = data.access_token
         // 取得使用者資料並設定登入狀態
         const user = data.user
-        userStore.nickname = user.nickname
-        userStore.originNickname = user.nickname
-        userStore.asideAccount = userStore.account
-        userStore.asideNickname = userStore.nickname
-        userStore.weight = user.weight
-        userStore.originWeight = user.weight
-        userStore.isLoggedIn = true
+        authStore.nickname = user.nickname
+        authStore.originNickname = user.nickname
+        authStore.asideAccount = authStore.account
+        authStore.asideNickname = authStore.nickname
+        authStore.weight = user.weight
+        authStore.originWeight = user.weight
+        authStore.isLoggedIn = true
         //  登入表單欄位清空
-        userStore.account = ''
-        userStore.password = ''
+        authStore.account = ''
+        authStore.password = ''
         alertSuccess('註冊成功', '歡迎加入！')
         router.push('/')
         return
@@ -160,13 +160,13 @@ export const useUserApiStore = defineStore('userApi', () => {
       alertError('伺服器錯誤', '無法連線至伺服器，將強制登出')
     } finally {
       // ✅ 無論 API 成功與否都要清除資料
-      userStore.reset() // 會重置到 state 初始值
+      authStore.reset() // 會重置到 state 初始值
       localStorage.removeItem('user') // 清除保存的狀態
       router.push('/login')
     }
   }
   async function getSecurityQuestions() {
-    if (userStore.securityQuestionsList.length > 0) {
+    if (authStore.securityQuestionsList.length > 0) {
       // 已經有資料就不重複取得
       return
     }
@@ -176,7 +176,7 @@ export const useUserApiStore = defineStore('userApi', () => {
       const response = await fetch(SECURITY_QUESTION_ENDPOINT, requestOptions)
       const result = await response.json()
       if (result.success) {
-        userStore.securityQuestionsList = result.data
+        authStore.securityQuestionsList = result.data
       }
     } catch (error) {
       console.error('安全性問題讀取失敗', error)
@@ -186,9 +186,9 @@ export const useUserApiStore = defineStore('userApi', () => {
   async function resetPasswordByQuestion() {
     const myHeaders = createHeaders(false)
     const raw = JSON.stringify({
-      account: userStore.account,
-      security_question_id: userStore.securityQuestion,
-      security_answer: userStore.securityAnswer,
+      account: authStore.account,
+      security_question_id: authStore.securityQuestion,
+      security_answer: authStore.securityAnswer,
     })
     const requestOptions: RequestInit = {
       method: 'post',
@@ -216,22 +216,22 @@ export const useUserApiStore = defineStore('userApi', () => {
     const myHeaders = createHeaders(true)
 
     const updateData: UpdateData = {} // --- 基本資料驗證 ---
-    if (userStore.nickname && userStore.nickname.trim() !== '') {
-      updateData.nickname = userStore.nickname.trim()
+    if (authStore.nickname && authStore.nickname.trim() !== '') {
+      updateData.nickname = authStore.nickname.trim()
     }
-    if (userStore.weight && userStore.weight > 0) {
-      updateData.weight = userStore.weight
+    if (authStore.weight && authStore.weight > 0) {
+      updateData.weight = authStore.weight
     }
 
     // --- 安全提問驗證 ---
-    if (userStore.securityQuestion && userStore.securityAnswer) {
-      if (userStore.securityAnswer.trim() === '') {
+    if (authStore.securityQuestion && authStore.securityAnswer) {
+      if (authStore.securityAnswer.trim() === '') {
         alertWarning('安全性問題答案不可為空', '請填寫答案後再送出')
         return false
       }
-      updateData.security_question_id = userStore.securityQuestion
-      updateData.security_answer = userStore.securityAnswer.trim()
-      updateData.password = userStore.password
+      updateData.security_question_id = authStore.securityQuestion
+      updateData.security_answer = authStore.securityAnswer.trim()
+      updateData.password = authStore.password
     }
 
     // --- 檢查是否有資料需要更新 ---
@@ -252,24 +252,24 @@ export const useUserApiStore = defineStore('userApi', () => {
       const tokenStatus = checkTokenValid(response) as TokenStatus
       if (tokenStatus.expired) {
         alertWarning('資料更新失敗', tokenStatus.message)
-        userStore.reset()
+        authStore.reset()
         router.push('/login')
         return
       }
       const result = await response.json()
       if (result.success) {
         alertSuccess('資料更新成功', result.message)
-        userStore.updateProfileDate()
+        authStore.updateProfileDate()
       } else {
         console.warn('資料更新失敗', result.message)
         alertError('資料更新失敗', result.message)
-        userStore.resetProfileData()
+        authStore.resetProfileData()
       }
     } catch (error: any) {
       const msg = error instanceof Error ? error.message : String(error)
       console.warn('資料更新失敗', error.message)
       alertError(msg, '伺服器無回應')
-      userStore.resetProfileData()
+      authStore.resetProfileData()
     }
   }
   async function renewPassword() {
@@ -288,7 +288,7 @@ export const useUserApiStore = defineStore('userApi', () => {
       const tokenStatus = checkTokenValid(response) as TokenStatus
       if (tokenStatus.expired) {
         alertWarning('密碼更新失敗', tokenStatus.message)
-        userStore.reset()
+        authStore.reset()
         router.push('/login')
         return
       }
@@ -308,8 +308,8 @@ export const useUserApiStore = defineStore('userApi', () => {
     const myHeaders = createHeaders(true)
 
     const raw = JSON.stringify({
-      old_password: userStore.password,
-      new_password: userStore.newPassword,
+      old_password: authStore.password,
+      new_password: authStore.newPassword,
     })
     const requestOptions: RequestInit = {
       method: 'put',
@@ -323,14 +323,14 @@ export const useUserApiStore = defineStore('userApi', () => {
       const tokenStatus = checkTokenValid(response) as TokenStatus
       if (tokenStatus.expired) {
         alertWarning('密碼更新失敗', tokenStatus.message)
-        userStore.reset()
+        authStore.reset()
         router.push('/login')
         return
       }
       const result = await response.json()
       if (result.success) {
         alertSuccess('密碼更新成功', '請使用新密碼重新登入')
-        userStore.reset() // 清掉 token / 使用者資料
+        authStore.reset() // 清掉 token / 使用者資料
         router.push('/login')
       } else {
         console.warn('密碼更新失敗', result.message)
@@ -355,7 +355,7 @@ export const useUserApiStore = defineStore('userApi', () => {
     headers.append('Content-Type', 'application/json')
 
     if (withAuth) {
-      const { token } = useUserStore()
+      const { token } = useAuthStore()
       if (token) headers.append('Authorization', `Bearer ${token}`)
     }
 

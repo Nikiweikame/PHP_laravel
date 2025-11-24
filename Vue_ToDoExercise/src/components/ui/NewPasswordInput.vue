@@ -1,10 +1,10 @@
 <!-- /src/components/PasswordInput.vue -->
 <script setup lang="ts">
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { ref } from 'vue'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const uiStore = useUiStore()
 
 const show = ref(false)
@@ -26,8 +26,8 @@ function toggle() {
       id="newPassword"
       minlength="6"
       placeholder="請輸入您的密碼(6位數以上)"
-      v-model="userStore.newPassword"
-      @input="userStore.checkStrength"
+      v-model="authStore.newPassword"
+      @input="authStore.checkStrength"
       required
     />
     <button class="password__button-visibility" @click="toggle" type="button">

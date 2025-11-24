@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import MonthNavigator from '@/components/ui/MonthNavigator.vue'
-const userStore = useUserStore()
+const authStore = useAuthStore()
 </script>
 <template>
   <header class="d-flex flex-xl-row flex-column justify-content-between align-items-center haeder">
-    <h1 class="m-0 p-3">{{ `你好，${userStore.nickname}，今天要做什麼運動？` }}</h1>
+    <h1 class="m-0 p-3">{{ `你好，${authStore.nickname}，今天要做什麼運動？` }}</h1>
     <MonthNavigator />
   </header>
 </template>

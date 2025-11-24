@@ -4,13 +4,13 @@ import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { useUserApiStore } from '@/stores/useUserApiStore'
 
 const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue'])
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
 
@@ -19,7 +19,7 @@ onMounted(() => {
 })
 
 function closeDialog() {
-  userStore.clearSecurityInfo()
+  authStore.clearSecurityInfo()
   uiStore.securityQuestionChangeModel = false
 }
 
@@ -29,7 +29,7 @@ function next() {
 }
 function complete() {
   step.value = 'security-question'
-  userStore.reset()
+  authStore.reset()
   
   closeDialog()
 }
@@ -61,7 +61,7 @@ async function submitForm(event: Event) {
             <h3 class="mb-3">重設安全提問</h3>
           </div>
           <div class="mb-3">
-            <SecurityQuestionSelect v-model="userStore.securityQuestion" />
+            <SecurityQuestionSelect v-model="authStore.securityQuestion" />
           </div>
           <div class="mb-3">
             <BaseInput
@@ -69,7 +69,7 @@ async function submitForm(event: Event) {
               id="security-answer"
               type="text"
               placeholder="請輸入您的答案"
-              v-model="userStore.securityAnswer"
+              v-model="authStore.securityAnswer"
             />
           </div>
           <div class="mb-3">

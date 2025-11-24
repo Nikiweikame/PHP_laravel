@@ -2,11 +2,10 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/useUserStore'
-
+import { useAuthStore } from '@/stores/useAuthStore'
 export const useUiStore = defineStore('ui', () => {
   const route = useRoute()
-  const userStore = useUserStore() // ✅ 要放在這裡
+  const authStore = useAuthStore() // ✅ 要放在這裡
 
   // 導覽項目集中管理
   const navItems = [
@@ -19,7 +18,7 @@ export const useUiStore = defineStore('ui', () => {
   ]
   // 根據登入狀態自動過濾
   const filteredNavItems = computed(() =>
-    navItems.filter((item) => item.figure === 'home' || item.auth === userStore.isLoggedIn),
+    navItems.filter((item) => item.figure === 'home' || item.auth === authStore.isLoggedIn),
   )
 
   const forgetPasswordModel = ref(false)
@@ -31,12 +30,12 @@ export const useUiStore = defineStore('ui', () => {
   const securityQuestionChangeModel = ref(false)
   const passwordChangeModel = ref(false)
   const toggleSecurityQuestionModel = () => {
-    userStore.securityAnswer = ''
+    authStore.securityAnswer = ''
     securityQuestionChangeModel.value = !securityQuestionChangeModel.value
   }
   const togglePasswordModel = () => {
-    userStore.password = ''
-    userStore.newPassword = ''
+    authStore.password = ''
+    authStore.newPassword = ''
     passwordChangeModel.value = !passwordChangeModel.value
   }
 
@@ -66,11 +65,11 @@ export const useUiStore = defineStore('ui', () => {
   const forgetPasswordStep = ref('security-question')
   function forgetPasswordNext(newpd: string) {
     forgetPasswordStep.value = 'change-password'
-    userStore.newPassword = newpd
+    authStore.newPassword = newpd
   }
   function forgetPasswordComplete() {
     forgetPasswordStep.value = 'security-question'
-    userStore.reset()
+    authStore.reset()
   }
 
   const showRecordDialog = ref(false)

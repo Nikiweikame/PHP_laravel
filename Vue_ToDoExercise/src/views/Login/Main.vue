@@ -4,11 +4,11 @@ import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
 import LoginButton from '@/components/ui/LoginButton.vue'
 import ForgotPasswordDialog from '@/components/layout/ForgotPasswordDialog.vue'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { useUserApiStore } from '@/stores/useUserApiStore'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
 
@@ -19,7 +19,7 @@ function toggle() {
 const DialogShow = ref(false)
 async function showDialog() {
   uiStore.showLoading()
-  userStore.reset()
+  authStore.reset()
   await ApiStore.getSecurityQuestions()
   uiStore.toggleForgetPasswordModel()
   uiStore.hideLoading()
@@ -32,7 +32,7 @@ async function submitForm(event: Event) {
     return
   }
   uiStore.showLoading()
-  ApiStore.login()
+  await authStore.doLogin()
   uiStore.hideLoading()
 }
 </script>
@@ -47,7 +47,7 @@ async function submitForm(event: Event) {
             name="account"
             class="login-card__input"
             placeholder="使用者帳號"
-            v-model="userStore.account"
+            v-model="authStore.account"
             required
           />
         </div>
@@ -60,7 +60,7 @@ async function submitForm(event: Event) {
             class="login-card__input"
             placeholder="密碼"
             :type="show ? 'text' : 'password'"
-            v-model="userStore.password"
+            v-model="authStore.password"
             required
           />
           <button class="login-card__button-visibility" @click="toggle" type="button">

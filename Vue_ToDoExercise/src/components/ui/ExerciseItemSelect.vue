@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useUserStore } from '@/stores/useUserStore'
-
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useExerciseItemStore } from '@/stores/useExerciseItemStore'
 import { useExerciseRecordStore } from '@/stores/useExerciseRecordStore'
 
 // 取用 Pinia store
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const exerciseItemStore = useExerciseItemStore()
 const exerciseRecordStore = useExerciseRecordStore()
 // 綁定使用者選擇的問題

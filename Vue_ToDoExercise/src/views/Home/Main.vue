@@ -5,16 +5,16 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import { ref } from 'vue'
 import LoginButton from '@/components/ui/LoginButton.vue'
 import ForgotPasswordDialog from '@/components/layout/ForgotPasswordDialog.vue'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { useUserApiStore } from '@/stores/useUserApiStore'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
 </script>
 <template>
-  <div v-if="userStore.isLoggedIn" class="col-12 mt-3 mb-3 text-center">
+  <div v-if="authStore.isLoggedIn" class="col-12 mt-3 mb-3 text-center">
     <RouterLink to="/profile" class="link">
       <BaseButton label="個人檔案" class="cancel" />
     </RouterLink>

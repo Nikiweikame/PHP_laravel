@@ -5,6 +5,8 @@ import { alertSuccess, alertWarning, alertError } from '@/utils/alert'
 import { ref } from 'vue'
 import { useExerciseItemStore } from './useExerciseItemStore'
 import { useExerciseRecordStore } from './useExerciseRecordStore'
+import { useUiStore } from './useUiStore'
+import { login } from '@/api/auth'
 
 interface SecurityQuestion {
   id: number
@@ -12,8 +14,8 @@ interface SecurityQuestion {
 }
 // const router = useRouter()
 
-export const useUserStore = defineStore(
-  'user',
+export const useAuthStore = defineStore(
+  'AuthStore',
   () => {
     // 登入輸入欄位
     const account = ref('') // 登入輸入用帳號
@@ -40,6 +42,7 @@ export const useUserStore = defineStore(
     // 額外資料
     const securityQuestionsList = ref<SecurityQuestion[]>([])
     const router = useRouter()
+    const uiStore = useUiStore()
 
     /** 重設所有欄位（登出或清除資料時用） */
     function reset() {
@@ -115,6 +118,48 @@ export const useUserStore = defineStore(
         strength.value = 'strong'
       }
     }
+    async function doLogin() {
+      try {
+        const result = await login(account.value, password.value)
+        // const result = data.data
+        // console.log(result)
+        handleLoginSuccess(result)
+      } catch (error: any) {
+        alertWarning('登入失敗', error.message || '請檢查帳號密碼是否正確')
+      }
+    }
+    function handleLoginSuccess(result: any) {
+      // 更新 token
+      token.value = result.access_token
+
+      // 更新使用者資料
+      const user = result.user
+      originNickname.value = user.nickname
+      nickname.value = user.nickname
+      asideAccount.value = account.value
+      asideNickname.value = nickname.value
+      weight.value = user.weight
+      originWeight.value = user.weight
+      isLoggedIn.value = true
+
+      // 清空登入欄位
+      account.value = ''
+      password.value = ''
+
+      // 處理密碼狀態
+      if (result.password_status !== 'ok') {
+        const warningTitle = result.password_status === 'expired' ? '密碼已過期' : '密碼為預設密碼'
+        alertWarning(warningTitle, '請前往個人檔案頁面更新密碼')
+        router.push('/profile')
+        uiStore.togglePasswordModel()
+        return
+      }
+
+      alertSuccess('登入成功', '歡迎回來！')
+      router.push('/records')
+      return
+    }
+
     return {
       account,
       password,
@@ -136,19 +181,13 @@ export const useUserStore = defineStore(
       updateProfileDate,
       clearSecurityInfo,
       checkStrength,
+      doLogin,
     }
   },
   {
     persist: {
       key: 'user', // localStorage 的 key 名稱
-      paths: [
-        'isLoggedIn',
-        'token',
-        'asideAccount',
-        'asideNickname',
-        'nickname',
-        'weight',
-      ], // 要持久化的欄位
+      paths: ['isLoggedIn', 'token', 'asideAccount', 'asideNickname', 'nickname', 'weight'], // 要持久化的欄位
       storage: localStorage, // 使用 localStorage
     },
   } as any, // TypeScript 目前對 pinia-plugin-persistedstate 支援不佳，暫時用 any 繞過,

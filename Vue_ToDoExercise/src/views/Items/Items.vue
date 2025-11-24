@@ -7,14 +7,13 @@ import router from '@/router'
 import ItemDialog from '@/components/layout/ItemDialog.vue'
 import { confirmDialog } from '@/utils/alert'
 import { onMounted } from 'vue'
-import { useUserStore } from '@/stores/useUserStore'
-
+import { useAuthStore } from '@/stores/useAuthStore'
 const uiStore = useUiStore()
 const exerciseItemStore = useExerciseItemStore()
 const exerciseRecordStore = useExerciseRecordStore()
-const userStore = useUserStore()
+const authStore = useAuthStore()
 onMounted(async () => {
-  if (userStore.token) {
+  if (authStore.token) {
     await exerciseItemStore.updateItems()
   } else {
     console.warn('token 尚未準備好，稍後再取資料')

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/useUserStore'
-const userStore = useUserStore()
+import { useAuthStore } from '@/stores/useAuthStore'
+const authStore = useAuthStore()
 </script>
 <template>
-  <p class="ZeroRecord">{{ `${userStore.nickname}，這個月快來做運動吧！` }}</p>
+  <p class="ZeroRecord">{{ `${authStore.nickname}，這個月快來做運動吧！` }}</p>
 </template>
 <style lang="scss" scoped>
 .ZeroRecord {

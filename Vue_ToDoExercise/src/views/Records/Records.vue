@@ -4,16 +4,16 @@ import { useExerciseRecordStore, type RecordsContent } from '@/stores/useExercis
 import ZeroRecord from '@/views/Records/ZeroRecord.vue'
 import AddButton from '@/components/ui/AddButton.vue'
 import { onMounted } from 'vue'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import RecordDialog from '@/components/layout/RecordDialog.vue'
 import { confirmDialog } from '@/utils/alert'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const uiStore = useUiStore()
 const exerciseRecordStore = useExerciseRecordStore()
 onMounted(async () => {
-  if (userStore.token) {
+  if (authStore.token) {
     await exerciseRecordStore.updateRecords()
   } else {
     console.warn('token 尚未準備好，稍後再取資料')

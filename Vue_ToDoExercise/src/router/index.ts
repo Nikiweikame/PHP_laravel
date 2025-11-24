@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import { useUserStore } from '@/stores/useUserStore'
-
+import { useAuthStore } from '@/stores/useAuthStore'
 import Homeview from '@/views/Home/HomeView.vue'
 import RegisterView from '@/views/Register/RegisterView.vue'
 import RecordsView from '@/views/Records/RecordsView.vue'
@@ -25,12 +24,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const userStore = useUserStore()
+  const authStore = useAuthStore()
 
   // 如果頁面需要登入而使用者尚未登入
-  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     next('/login') // 👈 導回登入頁
-  } else if ((to.path === '/login' || to.path === '/register') && userStore.isLoggedIn) {
+  } else if ((to.path === '/login' || to.path === '/register') && authStore.isLoggedIn) {
     next('/records') // 已登入就導回首頁
   } else {
     next()

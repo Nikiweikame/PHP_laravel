@@ -1,15 +1,15 @@
 <script setup lang="ts">
 
 
-import { useUserStore } from '@/stores/useUserStore'; 
+import { useAuthStore } from '@/stores/useAuthStore'; 
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 </script>
 <template>
-    <div class="password-strenght__title mb-2">{{`密碼強度(${userStore.strength})`}}</div>
+    <div class="password-strenght__title mb-2">{{`密碼強度(${authStore.strength})`}}</div>
     <div class="password-strenght__bar">
-      <div :class="['password-strenght__result', userStore.strength]"></div>
+      <div :class="['password-strenght__result', authStore.strength]"></div>
     </div>
 </template>
 <style lang="scss">

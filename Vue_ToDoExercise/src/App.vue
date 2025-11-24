@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useUserStore } from './stores/useUserStore'
+import { useAuthStore } from './stores/useAuthStore'
 import { RouterView } from 'vue-router'
 
 import Aside from './components/layout/Aside.vue'
 import Loading from './components/layout/Loading.vue'
 import MobileHeader from './components/layout/MobileHeader.vue'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 </script>
 
 <template>

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ITEMS_ENDPOINT } from '@/config/api'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from './useUiStore'
 import { useUserApiStore } from './useUserApiStore'
 import { useExerciseRecordStore } from './useExerciseRecordStore'
@@ -23,7 +23,7 @@ export interface ItemsContent {
 }
 
 export const useExerciseItemStore = defineStore('exerciseItems', () => {
-  const userStore = useUserStore()
+  const authStore = useAuthStore()
   const uiStore = useUiStore()
   const ApiStore = useUserApiStore()
   const router = useRouter()
@@ -45,7 +45,7 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
       const result = await response.json()
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return [] // 回傳空陣列和0卡路里
       }
@@ -121,7 +121,7 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
 
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }
@@ -159,7 +159,7 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
 
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }
@@ -191,7 +191,7 @@ export const useExerciseItemStore = defineStore('exerciseItems', () => {
 
       // 如果 token 過期或未授權
       if (response.status === 401) {
-        userStore.reset() // 🔹 清除使用者資料
+        authStore.reset() // 🔹 清除使用者資料
         router.push('/login') // 🔹 導向登入頁
         return false
       }

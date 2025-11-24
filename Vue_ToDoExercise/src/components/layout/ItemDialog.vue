@@ -4,7 +4,7 @@ import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { useUserApiStore } from '@/stores/useUserApiStore'
 import { useExerciseRecordStore } from '@/stores/useExerciseRecordStore'
@@ -12,7 +12,7 @@ import ExerciseItemSelect from '../ui/ExerciseItemSelect.vue'
 import { useExerciseItemStore } from '@/stores/useExerciseItemStore'
 import CalorieFormulaInput from '../ui/CalorieFormulaInput.vue'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
 const exerciseRecordStore = useExerciseRecordStore()

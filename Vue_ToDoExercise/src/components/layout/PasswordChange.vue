@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { useUserApiStore } from '@/stores/useUserApiStore'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
@@ -12,12 +12,12 @@ import PasswordStrenght from '@/components/ui/PasswordStrenght.vue'
 
 const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue'])
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
 
 function closeDialog() {
-  userStore.clearSecurityInfo()
+  authStore.clearSecurityInfo()
   uiStore.passwordChangeModel = false
 }
 

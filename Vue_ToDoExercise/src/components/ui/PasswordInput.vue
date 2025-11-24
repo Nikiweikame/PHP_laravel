@@ -1,9 +1,9 @@
 <!-- /src/components/PasswordInput.vue -->
 <script setup lang="ts">
-import { useUserStore } from '@/stores/useUserStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { ref } from 'vue'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const show = ref(false)
 function toggle() {
@@ -19,7 +19,7 @@ function toggle() {
       class="login-card__input"
       placeholder="密碼"
       :type="show ? 'text' : 'password'"
-      v-model="userStore.password"
+      v-model="authStore.password"
     />
     <button class="login-card__button-visibility" @click="toggle" type="button">
       <span class="login-card__icon-visibility material-symbols-outlined">visibility</span>

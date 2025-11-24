@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useUserStore } from '@/stores/useUserStore'
-// 取用 Pinia store
-const userStore = useUserStore()
+import { useAuthStore } from '@/stores/useAuthStore'// 取用 Pinia store
+const authStore = useAuthStore()
 
 // 綁定使用者選擇的問題
 const props = defineProps({
@@ -27,7 +26,7 @@ function onChange(event: Event) {
     :value="modelValue"
     @change="onChange"
   >
-    <option v-for="(q, index) in userStore.securityQuestionsList" :key="q.id" :value="q.id">
+    <option v-for="(q, index) in authStore.securityQuestionsList" :key="q.id" :value="q.id">
       {{ q.security_question }}
     </option>
   </select>
