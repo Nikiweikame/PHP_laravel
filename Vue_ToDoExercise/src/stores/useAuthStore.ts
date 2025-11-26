@@ -2,17 +2,13 @@
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import { alertSuccess, alertWarning, alertError } from '@/utils/alert'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useExerciseItemStore } from './useExerciseItemStore'
 import { useExerciseRecordStore } from './useExerciseRecordStore'
 import { useUiStore } from './useUiStore'
-import { login } from '@/api/auth'
+import { login, logout, register } from '@/api/auth'
 
-interface SecurityQuestion {
-  id: number
-  security_question: string
-}
-// const router = useRouter()
+import type { RegisterData, SecurityQuestion } from '@/types/auth'
 
 export const useAuthStore = defineStore(
   'AuthStore',
@@ -43,6 +39,16 @@ export const useAuthStore = defineStore(
     const securityQuestionsList = ref<SecurityQuestion[]>([])
     const router = useRouter()
     const uiStore = useUiStore()
+
+    // 註冊用資料
+    const registerForm = reactive<RegisterData>({
+      user_id: '',
+      password: '',
+      nickname: '',
+      weight: 0,
+      security_question_id: '1',
+      security_answer: '',
+    })
 
     /** 重設所有欄位（登出或清除資料時用） */
     function reset() {
@@ -90,8 +96,8 @@ export const useAuthStore = defineStore(
      *  - 含兩種型態 → 中 (medium)
      *  - 同時有 大寫 + 小寫 + 數字 → 強 (strong)
      */
-    function checkStrength() {
-      const pw = newPassword.value
+    function checkStrength(pw:string) {
+      // const pw = newPassword.value
 
       // 檢查是否包含小寫字母
       const hasLower = /[a-z]/.test(pw)
@@ -121,35 +127,16 @@ export const useAuthStore = defineStore(
     async function doLogin() {
       try {
         const result = await login(account.value, password.value)
-        // const result = data.data
-        // console.log(result)
         handleLoginSuccess(result)
       } catch (error: any) {
         alertWarning('登入失敗', error.message || '請檢查帳號密碼是否正確')
       }
     }
     function handleLoginSuccess(result: any) {
-      // 更新 token
-      token.value = result.access_token
-
-      // 更新使用者資料
-      const user = result.user
-      originNickname.value = user.nickname
-      nickname.value = user.nickname
-      asideAccount.value = account.value
-      asideNickname.value = nickname.value
-      weight.value = user.weight
-      originWeight.value = user.weight
-      isLoggedIn.value = true
-
-      // 清空登入欄位
-      account.value = ''
-      password.value = ''
-
+      setInformation(result)
       // 處理密碼狀態
       if (result.password_status !== 'ok') {
-        const warningTitle = result.password_status === 'expired' ? '密碼已過期' : '密碼為預設密碼'
-        alertWarning(warningTitle, '請前往個人檔案頁面更新密碼')
+        alertWarning(result.password_status, '請前往個人檔案頁面更新密碼')
         router.push('/profile')
         uiStore.togglePasswordModel()
         return
@@ -159,7 +146,59 @@ export const useAuthStore = defineStore(
       router.push('/records')
       return
     }
+    function setInformation(result: any) {
+      // 更新 token
+      token.value = result.access_token
 
+      // 更新使用者資料
+      const user = result.user
+      // aside 側邊欄位的部分
+      asideAccount.value = user.account
+      asideNickname.value = user.nickname
+      // 個人資料頁面的部分
+      originNickname.value = user.nickname
+      nickname.value = user.nickname
+      originWeight.value = user.weight
+      weight.value = user.weight
+      isLoggedIn.value = true
+
+      return
+    }
+    // 清空登入欄位
+    function clearLoginForm() {
+      account.value = ''
+      password.value = ''
+      return
+    }
+    function handleRegisterSuccess(result: any) {
+      setInformation(result)
+      alertSuccess('註冊成功', '歡迎加入！')
+      router.push('/records')
+      return
+    }
+    // 註冊
+    async function doRegister() {
+      try {
+        console.log(registerForm)
+        const result = await register(registerForm)
+        handleRegisterSuccess(result)
+      } catch (error: any) {
+        alertWarning('註冊失敗', error.message || '伺服器錯誤')
+      }
+    }
+    async function doLogout() {
+      try {
+        const result = await logout()
+        alertSuccess('👋 已登出', '下次再見')
+      } catch (error: any) {
+        alertWarning('⚠️ 登出異常', error.message || '將強制登出')
+      } finally {
+        // ✅ 無論 API 成功與否都要清除資料
+        reset() // 會重置到 state 初始值
+        localStorage.removeItem('user') // 清除保存的狀態
+        router.push('/login')
+      }
+    }
     return {
       account,
       password,
@@ -176,12 +215,15 @@ export const useAuthStore = defineStore(
       isLoggedIn,
       token,
       securityQuestionsList,
+      registerForm,
       reset,
       resetProfileData,
       updateProfileDate,
       clearSecurityInfo,
       checkStrength,
       doLogin,
+      doRegister,
+      doLogout,
     }
   },
   {

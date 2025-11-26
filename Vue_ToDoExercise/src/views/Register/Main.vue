@@ -7,12 +7,11 @@ import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import NewPasswordInput from '@/components/ui/NewPasswordInput.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
-import { useUserApiStore } from '@/stores/useUserApiStore'
+import { useUiStore } from '@/stores/useUiStore'
 const authStore = useAuthStore()
-const ApiStore = useUserApiStore()
+const uiStore = useUiStore()
 
-
-function submitForm(event: Event) {
+async function submitForm(event: Event) {
   const form = event.target as HTMLFormElement
   if (!form.checkValidity()) {
     // 欄位沒填好，瀏覽器會自動顯示提示
@@ -20,7 +19,9 @@ function submitForm(event: Event) {
     return
   }
   // 驗證通過，送 API
-  ApiStore.register()
+  uiStore.showLoading()
+  await authStore.doRegister()
+  uiStore.hideLoading()
 }
 </script>
 <template>
@@ -33,7 +34,7 @@ function submitForm(event: Event) {
           id="account"
           type="text"
           placeholder="請輸入您的帳號"
-          v-model="authStore.account"
+          v-model="authStore.registerForm.user_id"
         />
       </div>
       <div class="col-12 col-md-6 mb-3">
@@ -42,11 +43,13 @@ function submitForm(event: Event) {
           id="nickname"
           type="text"
           placeholder="請輸入您的暱稱"
-          v-model="authStore.nickname"
+          v-model="authStore.registerForm.nickname"
         />
       </div>
       <div class="col-12 mb-3">
-        <NewPasswordInput />
+        <NewPasswordInput
+          v-model="authStore.registerForm.password"
+        />
       </div>
       <div class="col-12 mb-3">
         <PasswordStrenght />
@@ -57,11 +60,11 @@ function submitForm(event: Event) {
           id="weight"
           type="number"
           placeholder="請輸入您的體重"
-          v-model="authStore.weight"
+          v-model="authStore.registerForm.weight"
         />
       </div>
       <div class="col-12 mb-3">
-        <SecurityQuestionSelect v-model="authStore.securityQuestion" />
+        <SecurityQuestionSelect v-model="authStore.registerForm.security_question_id" />
       </div>
       <div class="col-12 mb-3">
         <BaseInput
@@ -69,7 +72,7 @@ function submitForm(event: Event) {
           id="security-answer"
           type="text"
           placeholder="請輸入您的答案"
-          v-model="authStore.securityAnswer"
+          v-model="authStore.registerForm.security_answer"
         />
       </div>
       <div class="col-12 mb-3 text-center">

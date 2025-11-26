@@ -31,7 +31,7 @@ defineProps({
       </template>
     </div>
     <div v-if="authStore.isLoggedIn" class="logout">
-      <NavItem label="登出" figure="logout" @click="ApiStore.logout" />
+      <NavItem label="登出" figure="logout" @click="authStore.doLogout" />
     </div>
   </nav>
 </template>

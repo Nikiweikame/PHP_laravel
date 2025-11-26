@@ -33,107 +33,6 @@ export const useUserApiStore = defineStore('userApi', () => {
   const uiStore = useUiStore()
   const router = useRouter()
 
-  // 登入
-  async function login() {
-    const myHeaders = createHeaders(false)
-    const raw = JSON.stringify({
-      user_id: authStore.account,
-      password: authStore.password,
-    })
-
-    const requestOptions: RequestInit = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    }
-
-    try {
-      const response = await fetch(LOGIN_ENDPOINT, requestOptions)
-      const result = await response.json()
-      if (result.success) {
-        const data = result.data
-        //  拿token
-        authStore.token = data.access_token
-        // 取得使用者資料
-        const user = data.user
-        authStore.nickname = user.nickname
-        authStore.originNickname = user.nickname
-        authStore.asideAccount = authStore.account
-        authStore.asideNickname = authStore.nickname
-        authStore.weight = user.weight
-        authStore.originWeight = user.weight
-        authStore.isLoggedIn = true
-        //  登入表單欄位清空
-        authStore.account = ''
-        authStore.password = ''
-        if (data.password_status !== 'ok') {
-          const warningTitle = data.password_status === 'expired' ? '密碼已過期' : '密碼為預設密碼'
-          alertWarning(warningTitle, '請前往個人檔案頁面更新密碼')
-          router.push('/profile')
-          uiStore.togglePasswordModel()
-          return
-        }
-        alertSuccess('登入成功', '歡迎回來！')
-        router.push('/records')
-      } else {
-        alertWarning('登入失敗', result.message || '請檢查帳號密碼是否正確')
-      }
-    } catch (error: any) {
-      alertError('登入失敗', error.message || '伺服器無回應')
-    }
-  }
-
-  // 註冊
-  async function register() {
-    try {
-      const myHeaders = createHeaders(false)
-
-      const raw = JSON.stringify({
-        user_id: authStore.account,
-        password: authStore.newPassword,
-        nickname: authStore.nickname,
-        weight: authStore.weight,
-        security_question_id: authStore.securityQuestion,
-        security_answer: authStore.securityAnswer,
-      })
-
-      const requestOptions: RequestInit = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow',
-      }
-
-      const response = await fetch(REGISTER_ENDPOINT, requestOptions)
-      const result = await response.json()
-      if (result.success) {
-        const data = result.data
-        //  拿token
-        authStore.token = data.access_token
-        // 取得使用者資料並設定登入狀態
-        const user = data.user
-        authStore.nickname = user.nickname
-        authStore.originNickname = user.nickname
-        authStore.asideAccount = authStore.account
-        authStore.asideNickname = authStore.nickname
-        authStore.weight = user.weight
-        authStore.originWeight = user.weight
-        authStore.isLoggedIn = true
-        //  登入表單欄位清空
-        authStore.account = ''
-        authStore.password = ''
-        alertSuccess('註冊成功', '歡迎加入！')
-        router.push('/')
-        return
-      } else {
-        alertWarning('註冊失敗', result.message || '伺服器未正常回應')
-        return
-      }
-    } catch (err: any) {
-      alertError('註冊失敗', err.message || '伺服器錯誤')
-    }
-  }
 
   // 登出
   async function logout() {
@@ -146,8 +45,7 @@ export const useUserApiStore = defineStore('userApi', () => {
       body: raw,
       redirect: 'follow',
     }
-    // 登出是一個「安全動作」，應該確保前端一定清乾淨。
-    // 伺服器的回應是「加分」，不是「必要」。
+
     try {
       const response = await fetch(LOGOUT_ENDPOINT, requestOptions)
       const result = await response.json()
@@ -363,8 +261,6 @@ export const useUserApiStore = defineStore('userApi', () => {
   }
 
   return {
-    login,
-    register,
     logout,
     getSecurityQuestions,
     updateProfile,

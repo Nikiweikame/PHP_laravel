@@ -6,9 +6,9 @@ namespace App\Services;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
@@ -52,9 +52,9 @@ class AuthService
         // 密碼狀態
         $passwordStatus = 'ok';
         if ($isDefaultPassword) {
-            $passwordStatus = 'default';
+            $passwordStatus = '密碼為預設密碼';
         } elseif ($needsPasswordChange) {
-            $passwordStatus = 'expired';
+            $passwordStatus = '密碼已過期';
         }
 
         // 使用 UserResource 格式化使用者資料
@@ -94,10 +94,13 @@ class AuthService
             // 註冊完成馬上登入並回傳 token
             $token = JWTAuth::fromUser($user);
 
+            // 使用 UserResource 格式化使用者資料
+            $resource = new UserResource($user);
+
             return [
                 'success' => true,
                 'data' => [
-                    'user' => $user,
+                    'user' => $resource,
                     'access_token' => $token,
                     'token_type' => 'bearer',
                     'expires_in' => JWTAuth::factory()->getTTL() * 60,

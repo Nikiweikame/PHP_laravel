@@ -18,7 +18,7 @@ export const useUiStore = defineStore('ui', () => {
   ]
   // 根據登入狀態自動過濾
   const filteredNavItems = computed(() =>
-    navItems.filter((item) => item.figure === 'home' || item.auth === authStore.isLoggedIn),
+    navItems.filter((item) => item.label === '首頁' || item.auth === authStore.isLoggedIn),
   )
 
   const forgetPasswordModel = ref(false)

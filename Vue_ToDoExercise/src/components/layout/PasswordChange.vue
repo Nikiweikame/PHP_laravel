@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
-import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
@@ -26,7 +24,6 @@ function next() {
   step.value = 'change-password'
 }
 async function updatePasswordDate() {
-
   // 驗證通過，送 API
   uiStore.showLoading()
   await ApiStore.renewPassword()
@@ -62,7 +59,7 @@ async function submitForm(event: Event) {
             <label for="password" class="mb-3 w-100 form-label">
               <h5>舊密碼</h5>
             </label>
-            <PasswordInput />
+            <PasswordInput v-model="authStore.newPassword" />
           </div>
           <div class="mb-3">
             <NewPasswordInput />

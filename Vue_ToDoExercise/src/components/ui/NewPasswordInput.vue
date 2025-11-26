@@ -2,14 +2,25 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
+import { checkPasswordStrength } from '@/utils/password'
 import { ref } from 'vue'
 
 const authStore = useAuthStore()
 const uiStore = useUiStore()
-
+const emit = defineEmits(['update:modelValue', 'change'])
+const props = defineProps({
+  modelValue: { type: String, default: '' }, // 綁定值（支援 v-model）
+})
 const show = ref(false)
 function toggle() {
   show.value = !show.value
+}
+
+function handleInput(e: Event) {
+  const value = (e.target as HTMLInputElement).value
+  emit('update:modelValue', value)
+
+  authStore.strength = checkPasswordStrength(value)
 }
 </script>
 
@@ -26,8 +37,8 @@ function toggle() {
       id="newPassword"
       minlength="6"
       placeholder="請輸入您的密碼(6位數以上)"
-      v-model="authStore.newPassword"
-      @input="authStore.checkStrength"
+      :value="modelValue"
+      @input="handleInput"
       required
     />
     <button class="password__button-visibility" @click="toggle" type="button">
