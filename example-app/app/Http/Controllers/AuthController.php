@@ -72,11 +72,19 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         // 型別驗證
-        $credentials = $request->validated();
+        // $credentials = $request->validated();
 
-        $result = $this->authService->register($credentials);
+        $result = $this->authService->register(
+            $request->getUserId(),
+            $request->getPassword(),
+            $request->getNickname(),
+            $request->getWeight(),
+            $request->getSecurityQuestionId(),
+            $request->getSecurityAnswer()
+        );
 
         $status = $result['success'] ? 201 : 500;
+        // 狀態碼的參數
 
         return response()->json($result, $status);
     }

@@ -74,18 +74,24 @@ class AuthService
         ];
     }
 
-    public function register(array $credentials)
-    {
+    public function register(
+        string $userId,
+        string $password,
+        string $nickname,
+        ?float $weight,
+        int $securityQuestionId,
+        string $securityAnswer
+    ) {
 
         try {
             // 建立使用者
             $user = User::create([
-                'user_id' => $credentials['user_id'],
-                'password' => bcrypt($credentials['password']), // bcrypt 加密
-                'nickname' => $credentials['nickname'],
-                'weight' => $credentials['weight'] ?? 60.0, // 預設體重 60.0
-                'security_question_id' => $credentials['security_question_id'],
-                'answer_hash' => bcrypt($credentials['security_answer']), // bcrypt 加密
+                'user_id' => $userId,
+                'password' => bcrypt($password), // bcrypt 加密
+                'nickname' => $nickname,
+                'weight' => $weight ?? 60.0, // 預設體重 60.0
+                'security_question_id' => $securityQuestionId,
+                'answer_hash' => bcrypt($securityAnswer), // bcrypt 加密
                 'status' => 'active',
                 'last_login_at' => null,
                 'password_change_at' => now(), // 註冊時預設密碼設定時間

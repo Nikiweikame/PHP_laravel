@@ -44,4 +44,38 @@ class RegisterRequest extends FormRequest
             'security_answer.required' => '請輸入安全提問答案',
         ];
     }
+
+    // --------------------
+    // Getter Methods
+    // --------------------
+
+    public function getUserId(): string
+    {
+        return $this->input('user_id');
+    }
+
+    public function getPassword(): string
+    {
+        return $this->input('password');
+    }
+
+    public function getNickname(): string
+    {
+        return $this->input('nickname');
+    }
+
+    public function getWeight(): ?float
+    {
+        return $this->input('weight');
+    }
+
+    public function getSecurityQuestionId(): int
+    {
+        return (int) $this->input('security_question_id');
+    }
+
+    public function getSecurityAnswer(): string
+    {
+        return $this->input('security_answer');
+    }
 }
