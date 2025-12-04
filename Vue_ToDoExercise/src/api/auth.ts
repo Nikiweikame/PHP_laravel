@@ -1,11 +1,10 @@
 // src/api/auth.ts
 import api from '@/api/api'
-import type { RegisterData } from '@/types/auth'
+import type { LoginData, RegisterData } from '@/types/auth'
 
-
-export async function login(user_id: string, password: string) {
+export async function login(LoginData: LoginData) {
   try {
-    const { data } = await api.post('/login', { user_id, password })
+    const { data } = await api.post('/login', LoginData)
     if (data.success) {
       return data.data
     } else {

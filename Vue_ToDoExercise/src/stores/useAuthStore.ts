@@ -8,17 +8,108 @@ import { useExerciseRecordStore } from './useExerciseRecordStore'
 import { useUiStore } from './useUiStore'
 import { login, logout, register } from '@/api/auth'
 
-import type { RegisterData, SecurityQuestion } from '@/types/auth'
+import type {
+  ChangeSecurityQuestion,
+  ForgetPasswordData,
+  LoginData,
+  profileInformation,
+  RegisterData,
+  SecurityQuestion,
+} from '@/types/auth'
 
 export const useAuthStore = defineStore(
   'AuthStore',
   () => {
-    // 登入輸入欄位
-    const account = ref('') // 登入輸入用帳號
-    const password = ref('')
+    // 登入login
+    const defaultLoginForm: LoginData = {
+      user_id: '',
+      password: '',
+    }
+
+    const loginForm = reactive<LoginData>({ ...defaultLoginForm })
+    // 重置登入欄位
+    function resetLoginForm() {
+      Object.assign(loginForm, defaultLoginForm)
+    }
+    // 註冊register
+    const defaultRegisterForm: RegisterData = {
+      user_id: '',
+      password: '',
+      nickname: '',
+      weight: 0,
+      security_question_id: '1',
+      security_answer: '',
+    }
+    const registerForm = reactive<RegisterData>({ ...defaultRegisterForm })
+    function resetRegisterForm() {
+      Object.assign(registerForm, defaultRegisterForm)
+    }
+    // 忘記密碼forget password
+
+    const defaultForgetPasswordForm: ForgetPasswordData = {
+      user_id: '',
+      security_question_id: '1',
+      security_answer: '',
+      password: '',
+    }
+    const forgetPasswordForm = reactive<ForgetPasswordData>({ ...defaultForgetPasswordForm })
+    function resetForgetPasswordForm() {
+      Object.assign(forgetPasswordForm, defaultForgetPasswordForm)
+    }
+    // 密碼變更
+    const defaultChangePasswordForm: ForgetPasswordData = {
+      user_id: '',
+      security_question_id: '1',
+      security_answer: '',
+      password: '',
+    }
+    const changePasswordForm = reactive<ForgetPasswordData>({ ...defaultChangePasswordForm })
+    function resetChangePasswordForm() {
+      Object.assign(changePasswordForm, defaultChangePasswordForm)
+    }
+    // 安全提問變更
+    const defaultChangeSecurityQuestionForm: ChangeSecurityQuestion = {
+      security_question_id: '1',
+      security_answer: '',
+      password: '',
+    }
+    const changeSecurityQuestionForm = reactive<ChangeSecurityQuestion>({
+      ...defaultChangeSecurityQuestionForm,
+    })
+    function resetChangeSecurityQuestionForm() {
+      Object.assign(changeSecurityQuestionForm, defaultChangeSecurityQuestionForm)
+    }
     const newPassword = ref('')
 
     // 顯示用（側邊欄、header）
+    const defaultProfileInformation: profileInformation = {
+      nickname: '',
+      account: '',
+      weight: 0,
+    }
+    const profileInformation = reactive<profileInformation>({
+      ...defaultProfileInformation,
+    })
+    function resetProfileInformation() {
+      Object.assign(profileInformation, defaultProfileInformation)
+    }
+    const defaultAsideInformation: profileInformation = {
+      nickname: '訪客',
+      account: 'John Doe',
+      weight: 0,
+    }
+    const asideInformation = reactive<profileInformation>({
+      ...defaultAsideInformation,
+    })
+    function resetsideInformation() {
+      Object.assign(asideInformation, defaultAsideInformation)
+    }
+    const originInformation = reactive<profileInformation>({
+      ...defaultProfileInformation,
+    })
+    function resetOriginInformation() {
+      Object.assign(originInformation, defaultProfileInformation)
+    }
     const nickname = ref('')
     const originNickname = ref('')
     const asideAccount = ref('John Doe') // 顯示使用者名稱（登入後會更新）
@@ -40,20 +131,10 @@ export const useAuthStore = defineStore(
     const router = useRouter()
     const uiStore = useUiStore()
 
-    // 註冊用資料
-    const registerForm = reactive<RegisterData>({
-      user_id: '',
-      password: '',
-      nickname: '',
-      weight: 0,
-      security_question_id: '1',
-      security_answer: '',
-    })
-
     /** 重設所有欄位（登出或清除資料時用） */
     function reset() {
-      account.value = ''
-      password.value = ''
+      // account.value = ''
+      // password.value = ''
       newPassword.value = ''
       nickname.value = ''
       originNickname.value = ''
@@ -84,49 +165,14 @@ export const useAuthStore = defineStore(
     function clearSecurityInfo() {
       securityQuestion.value = '1'
       securityAnswer.value = ''
-      password.value = ''
+      // password.value = ''
       newPassword.value = ''
       strength.value = 'weak'
     }
 
-    /**
-     * 密碼強度檢測函式
-     * 規則：
-     *  - 只含一種型態（小寫、大寫、數字） → 弱 (weak)
-     *  - 含兩種型態 → 中 (medium)
-     *  - 同時有 大寫 + 小寫 + 數字 → 強 (strong)
-     */
-    function checkStrength(pw:string) {
-      // const pw = newPassword.value
-
-      // 檢查是否包含小寫字母
-      const hasLower = /[a-z]/.test(pw)
-      // 檢查是否包含大寫字母
-      const hasUpper = /[A-Z]/.test(pw)
-      // 檢查是否包含數字
-      const hasNumber = /[0-9]/.test(pw)
-
-      // 計算符合條件的種類數（true 的個數）
-      const typesCount = [hasLower, hasUpper, hasNumber].filter(Boolean).length
-
-      // 根據種類數決定強度
-      if (pw.length === 0) {
-        // 空密碼視為弱
-        strength.value = 'weak'
-      } else if (typesCount === 1) {
-        // 只有一種型態（純數字、純英文）→ 弱
-        strength.value = 'weak'
-      } else if (typesCount === 2) {
-        // 兩種型態（大小寫、有字母有數字但不全）→ 中
-        strength.value = 'medium'
-      } else if (typesCount === 3) {
-        // 同時有大小寫與數字 → 強
-        strength.value = 'strong'
-      }
-    }
     async function doLogin() {
       try {
-        const result = await login(account.value, password.value)
+        const result = await login(loginForm)
         handleLoginSuccess(result)
       } catch (error: any) {
         alertWarning('登入失敗', error.message || '請檢查帳號密碼是否正確')
@@ -164,12 +210,7 @@ export const useAuthStore = defineStore(
 
       return
     }
-    // 清空登入欄位
-    function clearLoginForm() {
-      account.value = ''
-      password.value = ''
-      return
-    }
+
     function handleRegisterSuccess(result: any) {
       setInformation(result)
       alertSuccess('註冊成功', '歡迎加入！')
@@ -200,8 +241,6 @@ export const useAuthStore = defineStore(
       }
     }
     return {
-      account,
-      password,
       newPassword,
       nickname,
       originNickname,
@@ -215,12 +254,20 @@ export const useAuthStore = defineStore(
       isLoggedIn,
       token,
       securityQuestionsList,
+      loginForm,
+      resetLoginForm,
       registerForm,
+      resetRegisterForm,
+      forgetPasswordForm,
+      resetForgetPasswordForm,
+      changePasswordForm,
+      resetChangePasswordForm,
+      changeSecurityQuestionForm,
+      resetChangeSecurityQuestionForm,
       reset,
       resetProfileData,
       updateProfileDate,
       clearSecurityInfo,
-      checkStrength,
       doLogin,
       doRegister,
       doLogout,

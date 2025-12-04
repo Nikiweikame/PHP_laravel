@@ -20,7 +20,7 @@ export const useUiStore = defineStore('ui', () => {
   const filteredNavItems = computed(() =>
     navItems.filter((item) => item.label === '首頁' || item.auth === authStore.isLoggedIn),
   )
-
+  // 忘記密碼的dialog控制
   const forgetPasswordModel = ref(false)
   const toggleForgetPasswordModel = () => {
     forgetPasswordModel.value = !forgetPasswordModel.value
@@ -34,8 +34,7 @@ export const useUiStore = defineStore('ui', () => {
     securityQuestionChangeModel.value = !securityQuestionChangeModel.value
   }
   const togglePasswordModel = () => {
-    authStore.password = ''
-    authStore.newPassword = ''
+    authStore.resetChangePasswordForm()
     passwordChangeModel.value = !passwordChangeModel.value
   }
 

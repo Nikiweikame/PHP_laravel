@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import { useCounterStore } from "@/stores/meals.js";
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import PasswordStrenght from '@/components/ui/PasswordStrenght.vue'
 import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
@@ -10,6 +10,10 @@ import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 const authStore = useAuthStore()
 const uiStore = useUiStore()
+
+onMounted(() => {
+  authStore.resetRegisterForm()
+})
 
 async function submitForm(event: Event) {
   const form = event.target as HTMLFormElement

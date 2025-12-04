@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { useCounterStore } from "@/stores/meals.js";
 import { RouterLink } from 'vue-router'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import LoginButton from '@/components/ui/LoginButton.vue'
 import ForgotPasswordDialog from '@/components/layout/ForgotPasswordDialog.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -11,6 +11,10 @@ import { useUserApiStore } from '@/stores/useUserApiStore'
 const authStore = useAuthStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
+
+onMounted(()=>{
+  authStore.resetLoginForm()
+})
 
 const show = ref(false)
 function toggle() {
@@ -47,7 +51,7 @@ async function submitForm(event: Event) {
             name="account"
             class="login-card__input"
             placeholder="使用者帳號"
-            v-model="authStore.account"
+            v-model="authStore.loginForm.user_id"
             required
           />
         </div>
@@ -60,7 +64,7 @@ async function submitForm(event: Event) {
             class="login-card__input"
             placeholder="密碼"
             :type="show ? 'text' : 'password'"
-            v-model="authStore.password"
+            v-model="authStore.loginForm.password"
             required
           />
           <button class="login-card__button-visibility" @click="toggle" type="button">

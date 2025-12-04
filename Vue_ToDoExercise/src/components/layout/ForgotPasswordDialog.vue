@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import SecurityQuestionSelect from '@/components/ui/SecurityQuestionSelect.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -10,6 +10,10 @@ import { useUserApiStore } from '@/stores/useUserApiStore'
 const authStore = useAuthStore()
 const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
+
+onMounted(()=>{
+  authStore.resetForgetPasswordForm()
+})
 
 function closeDialog() {
   authStore.reset()
@@ -52,11 +56,11 @@ async function submitForm(event: Event) {
               id="account"
               type="text"
               placeholder="請輸入您的帳號"
-              v-model="authStore.account"
+              v-model="authStore.forgetPasswordForm.user_id"
             />
           </div>
           <div class="mb-3">
-            <SecurityQuestionSelect v-model="authStore.securityQuestion" />
+            <SecurityQuestionSelect v-model="authStore.forgetPasswordForm.security_question_id" />
           </div>
           <div class="mb-3">
             <BaseInput
@@ -64,7 +68,7 @@ async function submitForm(event: Event) {
               id="security-answer"
               type="text"
               placeholder="請輸入您的答案"
-              v-model="authStore.securityAnswer"
+              v-model="authStore.forgetPasswordForm.security_answer"
             />
           </div>
           <div class="mb-3 text-end">
@@ -78,7 +82,7 @@ async function submitForm(event: Event) {
               label="這是系統為您產生的密碼"
               id="new-password"
               type="text"
-              v-model="authStore.newPassword"
+              v-model="authStore.forgetPasswordForm.password"
               :disabled="true"
             />
           </div>

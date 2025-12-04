@@ -82,93 +82,93 @@ export const useUserApiStore = defineStore('userApi', () => {
   }
   // 驗證答案並重設密碼
   async function resetPasswordByQuestion() {
-    const myHeaders = createHeaders(false)
-    const raw = JSON.stringify({
-      account: authStore.account,
-      security_question_id: authStore.securityQuestion,
-      security_answer: authStore.securityAnswer,
-    })
-    const requestOptions: RequestInit = {
-      method: 'post',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    }
+    // const myHeaders = createHeaders(false)
+    // const raw = JSON.stringify({
+    //   account: authStore.account,
+    //   security_question_id: authStore.securityQuestion,
+    //   security_answer: authStore.securityAnswer,
+    // })
+    // const requestOptions: RequestInit = {
+    //   method: 'post',
+    //   headers: myHeaders,
+    //   body: raw,
+    //   redirect: 'follow',
+    // }
 
-    try {
-      const response = await fetch(RESTETPASSWORD_ENDPOINT, requestOptions)
-      const result = await response.json()
-      if (result.success) {
-        uiStore.forgetPasswordNext('12qwAS')
-      } else {
-        console.warn('密碼重設失敗', result.message)
-        alertError('密碼重設失敗', result.message)
-      }
-    } catch (error: any) {
-      const msg = error instanceof Error ? error.message : String(error)
-      console.warn('密碼重設失敗', error.message)
-      alertError('伺服器無回應', msg)
-    }
+    // try {
+    //   const response = await fetch(RESTETPASSWORD_ENDPOINT, requestOptions)
+    //   const result = await response.json()
+    //   if (result.success) {
+    //     uiStore.forgetPasswordNext('12qwAS')
+    //   } else {
+    //     console.warn('密碼重設失敗', result.message)
+    //     alertError('密碼重設失敗', result.message)
+    //   }
+    // } catch (error: any) {
+    //   const msg = error instanceof Error ? error.message : String(error)
+    //   console.warn('密碼重設失敗', error.message)
+    //   alertError('伺服器無回應', msg)
+    // }
   }
   async function updateProfile() {
-    const myHeaders = createHeaders(true)
+    // const myHeaders = createHeaders(true)
 
-    const updateData: UpdateData = {} // --- 基本資料驗證 ---
-    if (authStore.nickname && authStore.nickname.trim() !== '') {
-      updateData.nickname = authStore.nickname.trim()
-    }
-    if (authStore.weight && authStore.weight > 0) {
-      updateData.weight = authStore.weight
-    }
+    // const updateData: UpdateData = {} // --- 基本資料驗證 ---
+    // if (authStore.nickname && authStore.nickname.trim() !== '') {
+    //   updateData.nickname = authStore.nickname.trim()
+    // }
+    // if (authStore.weight && authStore.weight > 0) {
+    //   updateData.weight = authStore.weight
+    // }
 
-    // --- 安全提問驗證 ---
-    if (authStore.securityQuestion && authStore.securityAnswer) {
-      if (authStore.securityAnswer.trim() === '') {
-        alertWarning('安全性問題答案不可為空', '請填寫答案後再送出')
-        return false
-      }
-      updateData.security_question_id = authStore.securityQuestion
-      updateData.security_answer = authStore.securityAnswer.trim()
-      updateData.password = authStore.password
-    }
+    // // --- 安全提問驗證 ---
+    // if (authStore.securityQuestion && authStore.securityAnswer) {
+    //   if (authStore.securityAnswer.trim() === '') {
+    //     alertWarning('安全性問題答案不可為空', '請填寫答案後再送出')
+    //     return false
+    //   }
+    //   updateData.security_question_id = authStore.securityQuestion
+    //   updateData.security_answer = authStore.securityAnswer.trim()
+    //   updateData.password = authStore.password
+    // }
 
-    // --- 檢查是否有資料需要更新 ---
-    if (Object.keys(updateData).length === 0) {
-      alertWarning('沒有可更新的資料', '請修改資料後再送出')
-      return false
-    }
-    const raw = JSON.stringify(updateData)
-    const requestOptions: RequestInit = {
-      method: 'put',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    }
+    // // --- 檢查是否有資料需要更新 ---
+    // if (Object.keys(updateData).length === 0) {
+    //   alertWarning('沒有可更新的資料', '請修改資料後再送出')
+    //   return false
+    // }
+    // const raw = JSON.stringify(updateData)
+    // const requestOptions: RequestInit = {
+    //   method: 'put',
+    //   headers: myHeaders,
+    //   body: raw,
+    //   redirect: 'follow',
+    // }
 
-    try {
-      const response = await fetch(PROFILE_ENDPOINT, requestOptions)
-      const tokenStatus = checkTokenValid(response) as TokenStatus
-      if (tokenStatus.expired) {
-        alertWarning('資料更新失敗', tokenStatus.message)
-        authStore.reset()
-        router.push('/login')
-        return
-      }
-      const result = await response.json()
-      if (result.success) {
-        alertSuccess('資料更新成功', result.message)
-        authStore.updateProfileDate()
-      } else {
-        console.warn('資料更新失敗', result.message)
-        alertError('資料更新失敗', result.message)
-        authStore.resetProfileData()
-      }
-    } catch (error: any) {
-      const msg = error instanceof Error ? error.message : String(error)
-      console.warn('資料更新失敗', error.message)
-      alertError(msg, '伺服器無回應')
-      authStore.resetProfileData()
-    }
+    // try {
+    //   const response = await fetch(PROFILE_ENDPOINT, requestOptions)
+    //   const tokenStatus = checkTokenValid(response) as TokenStatus
+    //   if (tokenStatus.expired) {
+    //     alertWarning('資料更新失敗', tokenStatus.message)
+    //     authStore.reset()
+    //     router.push('/login')
+    //     return
+    //   }
+    //   const result = await response.json()
+    //   if (result.success) {
+    //     alertSuccess('資料更新成功', result.message)
+    //     authStore.updateProfileDate()
+    //   } else {
+    //     console.warn('資料更新失敗', result.message)
+    //     alertError('資料更新失敗', result.message)
+    //     authStore.resetProfileData()
+    //   }
+    // } catch (error: any) {
+    //   const msg = error instanceof Error ? error.message : String(error)
+    //   console.warn('資料更新失敗', error.message)
+    //   alertError(msg, '伺服器無回應')
+    //   authStore.resetProfileData()
+    // }
   }
   async function renewPassword() {
     const myHeaders = createHeaders(true)
@@ -203,41 +203,41 @@ export const useUserApiStore = defineStore('userApi', () => {
     }
   }
   async function updatePassword() {
-    const myHeaders = createHeaders(true)
+    // const myHeaders = createHeaders(true)
 
-    const raw = JSON.stringify({
-      old_password: authStore.password,
-      new_password: authStore.newPassword,
-    })
-    const requestOptions: RequestInit = {
-      method: 'put',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow',
-    }
+    // const raw = JSON.stringify({
+    //   old_password: authStore.password,
+    //   new_password: authStore.newPassword,
+    // })
+    // const requestOptions: RequestInit = {
+    //   method: 'put',
+    //   headers: myHeaders,
+    //   body: raw,
+    //   redirect: 'follow',
+    // }
 
-    try {
-      const response = await fetch(UPDATEPASSWORD_ENDPOINT, requestOptions)
-      const tokenStatus = checkTokenValid(response) as TokenStatus
-      if (tokenStatus.expired) {
-        alertWarning('密碼更新失敗', tokenStatus.message)
-        authStore.reset()
-        router.push('/login')
-        return
-      }
-      const result = await response.json()
-      if (result.success) {
-        alertSuccess('密碼更新成功', '請使用新密碼重新登入')
-        authStore.reset() // 清掉 token / 使用者資料
-        router.push('/login')
-      } else {
-        console.warn('密碼更新失敗', result.message)
-        alertError('密碼更新失敗', result.message)
-      }
-    } catch (error: any) {
-      const msg = error instanceof Error ? error.message : String(error)
-      alertError(msg, '伺服器無回應')
-    }
+    // try {
+    //   const response = await fetch(UPDATEPASSWORD_ENDPOINT, requestOptions)
+    //   const tokenStatus = checkTokenValid(response) as TokenStatus
+    //   if (tokenStatus.expired) {
+    //     alertWarning('密碼更新失敗', tokenStatus.message)
+    //     authStore.reset()
+    //     router.push('/login')
+    //     return
+    //   }
+    //   const result = await response.json()
+    //   if (result.success) {
+    //     alertSuccess('密碼更新成功', '請使用新密碼重新登入')
+    //     authStore.reset() // 清掉 token / 使用者資料
+    //     router.push('/login')
+    //   } else {
+    //     console.warn('密碼更新失敗', result.message)
+    //     alertError('密碼更新失敗', result.message)
+    //   }
+    // } catch (error: any) {
+    //   const msg = error instanceof Error ? error.message : String(error)
+    //   alertError(msg, '伺服器無回應')
+    // }
   }
   function checkTokenValid(response: Response) {
     const tokenStatus = { expired: false, message: '' }
