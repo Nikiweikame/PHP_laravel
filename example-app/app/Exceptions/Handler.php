@@ -45,6 +45,14 @@ class Handler extends ExceptionHandler
             ], 500);
         }
 
+        // 處理註冊失敗的錯誤
+        if ($exception instanceof RegisterFailedException) {
+            return response()->json([
+                'success' => false,
+                'message' => $exception->getMessage(),
+            ], $exception->getStatusCode());
+        }
+
         // 其他例外交給 Laravel 預設處理
         return parent::render($request, $exception);
     }

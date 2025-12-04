@@ -71,9 +71,6 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        // 型別驗證
-        // $credentials = $request->validated();
-
         $result = $this->authService->register(
             $request->getUserId(),
             $request->getPassword(),
@@ -83,12 +80,7 @@ class AuthController extends Controller
             $request->getSecurityAnswer()
         );
 
-        // 狀態碼的參數
-        $status = $result['success']
-        ? Response::HTTP_CREATED     // 201
-        : Response::HTTP_INTERNAL_SERVER_ERROR; // 500
-
-        return response()->json($result, $status);
+        return response()->json($result, Response::HTTP_CREATED);
     }
 
     /**

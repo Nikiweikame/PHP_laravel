@@ -4,6 +4,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\RegisterFailedException;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -82,7 +83,6 @@ class AuthService
         int $securityQuestionId,
         string $securityAnswer
     ) {
-
         try {
             // 建立使用者
             $user = User::create([
@@ -96,31 +96,29 @@ class AuthService
                 'last_login_at' => null,
                 'password_change_at' => now(), // 註冊時預設密碼設定時間
             ]);
-
-            // 註冊完成馬上登入並回傳 token
-            $token = JWTAuth::fromUser($user);
-
-            // 使用 UserResource 格式化使用者資料
-            $resource = new UserResource($user);
-
-            return [
-                'success' => true,
-                'data' => [
-                    'user' => $resource,
-                    'access_token' => $token,
-                    'token_type' => 'bearer',
-                    'expires_in' => JWTAuth::factory()->getTTL() * 60,
-                ],
-                'message' => 'User registered successfully',
-            ];
-
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Registration failed',
-                'error' => $e->getMessage(),
-            ];
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23000') { // MySQL 專用
+                throw new RegisterFailedException('此帳號已被使用', Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            throw new RegisterFailedException('註冊失敗，請稍後再試', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        // 註冊完成馬上登入並回傳 token
+        $token = JWTAuth::fromUser($user);
+
+        // 使用 UserResource 格式化使用者資料
+        $resource = new UserResource($user);
+
+        return [
+            'success' => true,
+            'data' => [
+                'user' => $resource,
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60,
+            ],
+            'message' => 'User registered successfully',
+        ];
     }
 
     public function renewPassword(User $user): array
