@@ -83,8 +83,10 @@ class AuthController extends Controller
             $request->getSecurityAnswer()
         );
 
-        $status = $result['success'] ? 201 : 500;
         // 狀態碼的參數
+        $status = $result['success']
+        ? Response::HTTP_CREATED     // 201
+        : Response::HTTP_INTERNAL_SERVER_ERROR; // 500
 
         return response()->json($result, $status);
     }
