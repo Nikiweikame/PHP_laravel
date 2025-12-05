@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\SecurityQuestionResetRequest;
 use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Requests\Auth\UpdateUserProfileRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
@@ -24,10 +25,10 @@ class AuthController extends Controller
     // 登入
     public function login(LoginRequest $request)
     {
-        // 型別驗證
-        $credentials = $request->validated();
-
-        $result = $this->authService->login($credentials);
+        $result = $this->authService->login(
+            $request->getUserId(),
+            $request->getPassword()
+        );
 
         $statusCode = match ($result['status']) {
             'ok' => 200,
@@ -71,16 +72,30 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        $result = $this->authService->register(
-            $request->getUserId(),
-            $request->getPassword(),
-            $request->getNickname(),
-            $request->getWeight(),
-            $request->getSecurityQuestionId(),
-            $request->getSecurityAnswer()
-        );
+        // 簡單邏輯就不放到 Service 了
+        $user = User::create([
+            'user_id' => $request->user_id,
+            'password' => bcrypt($request->password),
+            'nickname' => $request->nickname,
+            'weight' => $request->weight ?? 60.0,
+            'security_question_id' => $request->security_question_id,
+            'answer_hash' => bcrypt($request->security_answer),
+            'status' => 'active',
+            'password_change_at' => now(),
+        ]);
 
-        return response()->json($result, Response::HTTP_CREATED);
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'user' => new UserResource($user),
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60,
+            ],
+            'message' => 'User registered successfully',
+        ], Response::HTTP_CREATED);
     }
 
     /**

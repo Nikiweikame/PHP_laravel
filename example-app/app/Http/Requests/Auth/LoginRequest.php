@@ -37,4 +37,18 @@ class LoginRequest extends FormRequest
             'password.min' => '密碼至少 6 個字元',
         ];
     }
+
+    // --------------------
+    // Getter Methods
+    // --------------------
+
+    public function getUserId(): string
+    {
+        return $this->input('user_id');
+    }
+
+    public function getPassword(): string
+    {
+        return $this->input('password');
+    }
 }

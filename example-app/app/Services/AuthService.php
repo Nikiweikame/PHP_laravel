@@ -13,8 +13,12 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
-    public function login(array $credentials)
+    public function login(string $userId, string $password)
     {
+        $credentials = [
+            'user_id' => $userId,   // 根據你的 users table 欄位自行調整
+            'password' => $password,
+        ];
         try {
             // 嘗試登入並產生 JWT token
             if (! $token = JWTAuth::attempt($credentials)) {

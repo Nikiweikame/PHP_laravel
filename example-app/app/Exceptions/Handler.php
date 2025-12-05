@@ -18,7 +18,7 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'success' => false,
                 'message' => $exception->errors(),
-            ], 422);
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         // JWT token 過期
@@ -45,13 +45,13 @@ class Handler extends ExceptionHandler
             ], 500);
         }
 
-        // 處理註冊失敗的錯誤
-        if ($exception instanceof RegisterFailedException) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-            ], $exception->getStatusCode());
-        }
+        // // 處理註冊失敗的錯誤
+        // if ($exception instanceof RegisterFailedException) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => $exception->getMessage(),
+        //     ], $exception->getStatusCode());
+        // }
 
         // 其他例外交給 Laravel 預設處理
         return parent::render($request, $exception);
