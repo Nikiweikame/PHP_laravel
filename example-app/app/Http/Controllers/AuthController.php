@@ -31,10 +31,10 @@ class AuthController extends Controller
         );
 
         $statusCode = match ($result['status']) {
-            'ok' => 200,
-            'invalid_credentials' => 401,
-            'server_error' => 500,
-            default => 400,
+            'ok' => Response::HTTP_OK,
+            'invalid_credentials' => Response::HTTP_UNAUTHORIZED,
+            'server_error' => Response::HTTP_INTERNAL_SERVER_ERROR,
+            default => Response::HTTP_BAD_REQUEST,
         };
 
         return response()->json($result, $statusCode);
@@ -109,7 +109,7 @@ class AuthController extends Controller
 
         $result = $this->authService->updateUserProfile($user, $credentials);
 
-        $status = $result['success'] ? 200 : 403;
+        $status = $result['success'] ? Response::HTTP_OK : Response::HTTP_FORBIDDEN;
 
         return response()->json($result, $status);
     }
@@ -130,7 +130,7 @@ class AuthController extends Controller
 
         $result = $this->authService->resetPasswordWithSecurityQuestion($user, $credentials);
 
-        $status = $result['success'] ? 200 : 400;
+        $status = $result['success'] ? Response::HTTP_OK : 400;
 
         return response()->json($result, $status);
     }
@@ -150,7 +150,7 @@ class AuthController extends Controller
 
         $result = $this->authService->updatePassword($user, $credentials);
 
-        $status = $result['success'] ? 200 : 403;
+        $status = $result['success'] ? Response::HTTP_OK : Response::HTTP_FORBIDDEN;
 
         return response()->json($result, $status);
 
