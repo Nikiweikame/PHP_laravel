@@ -4,7 +4,9 @@ import { useAuthStore } from '@/stores/useAuthStore'
 import { ref } from 'vue'
 
 const authStore = useAuthStore()
-
+const props = defineProps({
+  modelValue: { type: String, default: '' }, // 綁定值（支援 v-model）
+})
 const show = ref(false)
 function toggle() {
   show.value = !show.value
@@ -19,7 +21,8 @@ function toggle() {
       class="login-card__input"
       placeholder="密碼"
       :type="show ? 'text' : 'password'"
-      v-model="authStore.password"
+      :value="modelValue"
+      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
     <button class="login-card__button-visibility" @click="toggle" type="button">
       <span class="login-card__icon-visibility material-symbols-outlined">visibility</span>

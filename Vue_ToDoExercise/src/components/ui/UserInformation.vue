@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/useAuthStore'// 取用 Pinia store
 const authStore = useAuthStore()
-defineProps({
-  name: {
-    type: String,
-  },
-})
+
 </script>
 <template>
   <div class="card userInformation" style="max-width: 540px">
@@ -16,8 +12,8 @@ defineProps({
       </div>
       <div class="col-8">
         <div class="card-body">
-          <h5 class="card-title">{{ authStore.asideNickname }}</h5>
-          <p class="card-text">{{ authStore.asideAccount }}</p>
+          <h5 class="card-title">{{ authStore.userData.nickname }}</h5>
+          <p class="card-text">{{ authStore.userData.account }}</p>
         </div>
       </div>
     </div>

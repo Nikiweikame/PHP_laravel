@@ -32,7 +32,7 @@ async function submitForm(event: Event) {
     return
   }
   uiStore.showLoading()
-  await ApiStore.resetPasswordByQuestion()
+  await authStore.doResetPasswordByQuestion()
   uiStore.hideLoading()
 }
 </script>
@@ -56,7 +56,7 @@ async function submitForm(event: Event) {
               id="account"
               type="text"
               placeholder="請輸入您的帳號"
-              v-model="authStore.forgetPasswordForm.user_id"
+              v-model="authStore.forgetPasswordForm.account"
             />
           </div>
           <div class="mb-3">

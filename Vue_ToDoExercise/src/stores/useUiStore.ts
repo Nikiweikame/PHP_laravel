@@ -64,7 +64,7 @@ export const useUiStore = defineStore('ui', () => {
   const forgetPasswordStep = ref('security-question')
   function forgetPasswordNext(newpd: string) {
     forgetPasswordStep.value = 'change-password'
-    authStore.newPassword = newpd
+    authStore.forgetPasswordForm.password = newpd;
   }
   function forgetPasswordComplete() {
     forgetPasswordStep.value = 'security-question'

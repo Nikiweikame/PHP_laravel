@@ -6,15 +6,25 @@ import { reactive, ref } from 'vue'
 import { useExerciseItemStore } from './useExerciseItemStore'
 import { useExerciseRecordStore } from './useExerciseRecordStore'
 import { useUiStore } from './useUiStore'
-import { login, logout, register } from '@/api/auth'
+import {
+  login,
+  logout,
+  register,
+  renewPassword,
+  resetPasswordByQuestion,
+  updatePassword,
+  updateProfile,
+} from '@/api/auth'
 
 import type {
+  changePasswordData,
   ChangeSecurityQuestion,
   ForgetPasswordData,
   LoginData,
   profileInformation,
   RegisterData,
   SecurityQuestion,
+  UpdateData,
 } from '@/types/auth'
 
 export const useAuthStore = defineStore(
@@ -22,7 +32,7 @@ export const useAuthStore = defineStore(
   () => {
     // 登入login
     const defaultLoginForm: LoginData = {
-      user_id: '',
+      account: '',
       password: '',
     }
 
@@ -33,7 +43,7 @@ export const useAuthStore = defineStore(
     }
     // 註冊register
     const defaultRegisterForm: RegisterData = {
-      user_id: '',
+      account: '',
       password: '',
       nickname: '',
       weight: 0,
@@ -47,7 +57,7 @@ export const useAuthStore = defineStore(
     // 忘記密碼forget password
 
     const defaultForgetPasswordForm: ForgetPasswordData = {
-      user_id: '',
+      account: '',
       security_question_id: '1',
       security_answer: '',
       password: '',
@@ -57,16 +67,15 @@ export const useAuthStore = defineStore(
       Object.assign(forgetPasswordForm, defaultForgetPasswordForm)
     }
     // 密碼變更
-    const defaultChangePasswordForm: ForgetPasswordData = {
-      user_id: '',
-      security_question_id: '1',
-      security_answer: '',
-      password: '',
+    const defaultChangePasswordForm: changePasswordData = {
+      old_password: '',
+      new_password: '',
     }
-    const changePasswordForm = reactive<ForgetPasswordData>({ ...defaultChangePasswordForm })
+    const changePasswordForm = reactive<changePasswordData>({ ...defaultChangePasswordForm })
     function resetChangePasswordForm() {
       Object.assign(changePasswordForm, defaultChangePasswordForm)
     }
+
     // 安全提問變更
     const defaultChangeSecurityQuestionForm: ChangeSecurityQuestion = {
       security_question_id: '1',
@@ -81,35 +90,28 @@ export const useAuthStore = defineStore(
     }
     const newPassword = ref('')
 
-    // 顯示用（側邊欄、header）
-    const defaultProfileInformation: profileInformation = {
-      nickname: '',
-      account: '',
-      weight: 0,
-    }
-    const profileInformation = reactive<profileInformation>({
-      ...defaultProfileInformation,
-    })
-    function resetProfileInformation() {
-      Object.assign(profileInformation, defaultProfileInformation)
-    }
-    const defaultAsideInformation: profileInformation = {
+    // 個人資訊儲存
+    const defaultUser: profileInformation = {
       nickname: '訪客',
       account: 'John Doe',
       weight: 0,
     }
-    const asideInformation = reactive<profileInformation>({
-      ...defaultAsideInformation,
+    const userData = reactive<profileInformation>({
+      ...defaultUser,
     })
-    function resetsideInformation() {
-      Object.assign(asideInformation, defaultAsideInformation)
+    function resetUser() {
+      Object.assign(userData, defaultUser)
     }
-    const originInformation = reactive<profileInformation>({
-      ...defaultProfileInformation,
-    })
-    function resetOriginInformation() {
-      Object.assign(originInformation, defaultProfileInformation)
+    const modifyUser: profileInformation = {
+      nickname: '訪客',
+      account: 'John Doe',
+      weight: 0,
     }
+
+    function resetModifyUser() {
+      Object.assign(modifyUser, userData)
+    }
+
     const nickname = ref('')
     const originNickname = ref('')
     const asideAccount = ref('John Doe') // 顯示使用者名稱（登入後會更新）
@@ -124,7 +126,7 @@ export const useAuthStore = defineStore(
 
     // 登入狀態與 Token
     const isLoggedIn = ref(false)
-    const token = ref<string | null>(localStorage.getItem('token'))
+    const token = ref<string | null>(null)
 
     // 額外資料
     const securityQuestionsList = ref<SecurityQuestion[]>([])
@@ -133,17 +135,23 @@ export const useAuthStore = defineStore(
 
     /** 重設所有欄位（登出或清除資料時用） */
     function reset() {
+      resetLoginForm()
+      resetRegisterForm()
+      resetForgetPasswordForm()
+      resetChangePasswordForm()
+      resetChangeSecurityQuestionForm()
+      resetUser()
       // account.value = ''
       // password.value = ''
-      newPassword.value = ''
-      nickname.value = ''
-      originNickname.value = ''
-      asideAccount.value = 'John Doe'
-      asideNickname.value = '訪客'
-      weight.value = 0
-      originWeight.value = 0
-      securityQuestion.value = '1'
-      securityAnswer.value = ''
+      // newPassword.value = ''
+      // nickname.value = ''
+      // originNickname.value = ''
+      // asideAccount.value = 'John Doe'
+      // asideNickname.value = '訪客'
+      // weight.value = 0
+      // originWeight.value = 0
+      // securityQuestion.value = '1'
+      // securityAnswer.value = ''
       strength.value = 'weak'
       isLoggedIn.value = false
       token.value = ''
@@ -157,10 +165,10 @@ export const useAuthStore = defineStore(
       nickname.value = originNickname.value
       weight.value = originWeight.value
     }
-    function updateProfileDate() {
-      originNickname.value = nickname.value
-      originWeight.value = weight.value
-      asideNickname.value = nickname.value
+    function updateProfileData(profileData: profileInformation) {
+      console.log('profileData', profileData)
+      userData.nickname = profileData.nickname
+      userData.weight = profileData.weight
     }
     function clearSecurityInfo() {
       securityQuestion.value = '1'
@@ -173,13 +181,19 @@ export const useAuthStore = defineStore(
     async function doLogin() {
       try {
         const result = await login(loginForm)
-        handleLoginSuccess(result)
+        if (result.success) {
+          handleLoginSuccess(result.data)
+        } else {
+          throw new Error(result.message || '登入失敗')
+        }
       } catch (error: any) {
+        console.warn('登入失敗', error.message)
         alertWarning('登入失敗', error.message || '請檢查帳號密碼是否正確')
       }
     }
     function handleLoginSuccess(result: any) {
       setInformation(result)
+      resetModifyUser()
       // 處理密碼狀態
       if (result.password_status !== 'ok') {
         alertWarning(result.password_status, '請前往個人檔案頁面更新密碼')
@@ -198,15 +212,13 @@ export const useAuthStore = defineStore(
 
       // 更新使用者資料
       const user = result.user
-      // aside 側邊欄位的部分
-      asideAccount.value = user.account
-      asideNickname.value = user.nickname
-      // 個人資料頁面的部分
-      originNickname.value = user.nickname
-      nickname.value = user.nickname
-      originWeight.value = user.weight
-      weight.value = user.weight
+      userData.account = user.account
+      userData.nickname = user.nickname
+      userData.weight = user.weight
+      // 更新登入狀態
       isLoggedIn.value = true
+      // 重置密碼強度
+      strength.value = 'weak'
 
       return
     }
@@ -220,24 +232,97 @@ export const useAuthStore = defineStore(
     // 註冊
     async function doRegister() {
       try {
-        console.log(registerForm)
+        console.log(registerForm,123)
         const result = await register(registerForm)
-        handleRegisterSuccess(result)
+        if (result.success) {
+          handleRegisterSuccess(result.data)
+        } else {
+          throw new Error(result.message || '註冊失敗')
+        }
       } catch (error: any) {
+        console.warn('註冊失敗', error.message)
         alertWarning('註冊失敗', error.message || '伺服器錯誤')
       }
     }
     async function doLogout() {
       try {
         const result = await logout()
-        alertSuccess('👋 已登出', '下次再見')
+        if (result.success) {
+          alertSuccess('👋 已登出', '下次再見')
+        } else {
+          throw new Error(result.message || '伺服器未正常回應')
+        }
       } catch (error: any) {
-        alertWarning('⚠️ 登出異常', error.message || '將強制登出')
+        alertWarning('⚠️ 登出異常', error.message && '將強制登出')
       } finally {
         // ✅ 無論 API 成功與否都要清除資料
         reset() // 會重置到 state 初始值
         localStorage.removeItem('user') // 清除保存的狀態
         router.push('/login')
+      }
+    }
+    async function doUpdateProfile(updateData: UpdateData) {
+      try {
+        // --- 檢查是否有資料需要更新 ---
+        if (Object.keys(updateData).length === 0) {
+          alertWarning('沒有可更新的資料', '請修改資料後再送出')
+          return false
+        }
+        const result = await updateProfile(updateData)
+        if (result.success) {
+          updateProfileData(result.data)
+          alertSuccess('資料更新成功', '個人資料已更新')
+        } else {
+          throw new Error(result.message || '資料更新失敗')
+        }
+      } catch (error: any) {
+        console.warn('資料更新失敗', error.message)
+        alertWarning('資料更新失敗', error.message || '伺服器錯誤')
+      }
+    }
+
+    async function doResetPasswordByQuestion() {
+      try {
+        const result = await resetPasswordByQuestion(forgetPasswordForm)
+        if (result.success) {
+          uiStore.forgetPasswordNext('12qwAS')
+        } else {
+          console.warn('密碼重設失敗', result.message)
+          alertError('密碼重設失敗', result.message)
+        }
+      } catch (error: any) {
+        console.warn('密碼重設失敗', error.message)
+        alertError('密碼重設失敗', error.message)
+      }
+    }
+    async function doUpdatePassword() {
+      try {
+        const result = await updatePassword(changePasswordForm)
+        if (result.success) {
+          alertSuccess('密碼更新成功', '請使用新密碼重新登入')
+          reset() // 清掉 token / 使用者資料
+          router.push('/login')
+        } else {
+          console.warn('密碼更新失敗', result.message)
+          alertError('密碼更新失敗', result.message)
+        }
+      } catch (error: any) {
+        console.warn('密碼更新失敗', error.message)
+        alertError('密碼更新失敗', error.message)
+      }
+    }
+    async function doRenewPassword() {
+      try {
+        const result = await renewPassword()
+        if (result.success) {
+          alertSuccess('密碼沿用成功', '建議使用新密碼重新登入')
+        } else {
+          console.warn('密碼沿用失敗', result.message)
+          alertError('密碼沿用失敗', result.message)
+        }
+      } catch (error: any) {
+        console.warn('密碼沿用失敗', error.message)
+        alertError('密碼沿用失敗', error.message)
       }
     }
     return {
@@ -264,19 +349,27 @@ export const useAuthStore = defineStore(
       resetChangePasswordForm,
       changeSecurityQuestionForm,
       resetChangeSecurityQuestionForm,
+      userData,
+      resetUser,
+      modifyUser,
+      resetModifyUser,
       reset,
       resetProfileData,
-      updateProfileDate,
+      updateProfileData,
       clearSecurityInfo,
       doLogin,
       doRegister,
       doLogout,
+      doUpdateProfile,
+      doResetPasswordByQuestion,
+      doUpdatePassword,
+      doRenewPassword,
     }
   },
   {
     persist: {
       key: 'user', // localStorage 的 key 名稱
-      paths: ['isLoggedIn', 'token', 'asideAccount', 'asideNickname', 'nickname', 'weight'], // 要持久化的欄位
+      paths: ['isLoggedIn', 'token', 'userData', 'modifyUser'], // 要持久化的欄位
       storage: localStorage, // 使用 localStorage
     },
   } as any, // TypeScript 目前對 pinia-plugin-persistedstate 支援不佳，暫時用 any 繞過,

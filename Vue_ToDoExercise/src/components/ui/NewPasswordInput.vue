@@ -1,4 +1,4 @@
-<!-- /src/components/PasswordInput.vue -->
+<!-- /src/components/NewPasswordInput.vue -->
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'

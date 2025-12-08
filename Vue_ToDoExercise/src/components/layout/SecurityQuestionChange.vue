@@ -7,6 +7,8 @@ import PasswordInput from '@/components/ui/PasswordInput.vue'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useUiStore } from '@/stores/useUiStore'
 import { useUserApiStore } from '@/stores/useUserApiStore'
+import { validProfileData, validSecurityQuestionData } from '@/utils/valid'
+import { alertWarning } from '@/utils/alert'
 
 const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue'])
@@ -19,7 +21,7 @@ onMounted(() => {
 })
 
 function closeDialog() {
-  authStore.clearSecurityInfo()
+  authStore.resetChangeSecurityQuestionForm()
   uiStore.securityQuestionChangeModel = false
 }
 
@@ -30,7 +32,7 @@ function next() {
 function complete() {
   step.value = 'security-question'
   authStore.reset()
-  
+
   closeDialog()
 }
 async function submitForm(event: Event) {
@@ -40,11 +42,20 @@ async function submitForm(event: Event) {
     form.reportValidity()
     return
   }
-  // 驗證通過，送 API
-  uiStore.showLoading()
-  await ApiStore.updateProfile()
-  closeDialog()
-  uiStore.hideLoading()
+  try {
+    if (authStore.changeSecurityQuestionForm.security_answer.trim() === '') {
+      alertWarning('安全性問題答案不可為空', '請填寫答案後再送出')
+      return false
+    }
+    const updateData = validSecurityQuestionData(authStore.changeSecurityQuestionForm)
+    uiStore.showLoading()
+    await authStore.doUpdateProfile(updateData)
+    closeDialog()
+  } catch (error: any) {
+    alertWarning('安全性問題答案修改失敗', error.message)
+  } finally {
+    uiStore.hideLoading()
+  }
 }
 </script>
 
@@ -61,7 +72,9 @@ async function submitForm(event: Event) {
             <h3 class="mb-3">重設安全提問</h3>
           </div>
           <div class="mb-3">
-            <SecurityQuestionSelect v-model="authStore.securityQuestion" />
+            <SecurityQuestionSelect
+              v-model="authStore.changeSecurityQuestionForm.security_question_id"
+            />
           </div>
           <div class="mb-3">
             <BaseInput
@@ -69,14 +82,14 @@ async function submitForm(event: Event) {
               id="security-answer"
               type="text"
               placeholder="請輸入您的答案"
-              v-model="authStore.securityAnswer"
+              v-model="authStore.changeSecurityQuestionForm.security_answer"
             />
           </div>
           <div class="mb-3">
             <label for="password" class="mb-3 w-100 form-label">
               <h5 class="mb-0">請輸入密碼</h5>
             </label>
-            <PasswordInput />
+            <PasswordInput v-model="authStore.changeSecurityQuestionForm.password" />
           </div>
           <div class="mb-3 text-end">
             <BaseButton class="cancel" type="button" @click="closeDialog" label="取消" />
@@ -119,7 +132,7 @@ async function submitForm(event: Event) {
 .bt + .bt {
   margin-left: 12px;
 }
-h5{
+h5 {
   font-size: 16px;
 }
 </style>

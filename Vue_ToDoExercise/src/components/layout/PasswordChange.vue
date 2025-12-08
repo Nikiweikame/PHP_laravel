@@ -15,7 +15,8 @@ const uiStore = useUiStore()
 const ApiStore = useUserApiStore()
 
 function closeDialog() {
-  authStore.clearSecurityInfo()
+  authStore.resetChangePasswordForm()
+  authStore.strength = 'weak';
   uiStore.passwordChangeModel = false
 }
 
@@ -26,7 +27,7 @@ function next() {
 async function updatePasswordDate() {
   // 驗證通過，送 API
   uiStore.showLoading()
-  await ApiStore.renewPassword()
+  await authStore.doRenewPassword()
   closeDialog()
   uiStore.hideLoading()
 }
@@ -40,7 +41,7 @@ async function submitForm(event: Event) {
 
   // 驗證通過，送 API
   uiStore.showLoading()
-  await ApiStore.updatePassword()
+  await authStore.doUpdatePassword()
   closeDialog()
   uiStore.hideLoading()
 }
@@ -59,10 +60,10 @@ async function submitForm(event: Event) {
             <label for="password" class="mb-3 w-100 form-label">
               <h5>舊密碼</h5>
             </label>
-            <PasswordInput v-model="authStore.newPassword" />
+            <PasswordInput v-model="authStore.changePasswordForm.old_password" />
           </div>
           <div class="mb-3">
-            <NewPasswordInput />
+            <NewPasswordInput v-model="authStore.changePasswordForm.new_password" />
           </div>
           <div class="mb-3">
             <PasswordStrenght />

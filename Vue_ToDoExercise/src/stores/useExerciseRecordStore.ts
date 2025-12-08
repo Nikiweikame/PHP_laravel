@@ -200,7 +200,7 @@ export const useExerciseRecordStore = defineStore('exerciseRecord', () => {
   }
   const calculateCalories = () => {
     if (weight_unit.value) {
-      calories.value = Number((authStore.weight * count.value * calories_per_unit.value).toFixed(2))
+      calories.value = Number((authStore.userData.weight * count.value * calories_per_unit.value).toFixed(2))
     } else {
       calories.value = Number((count.value * calories_per_unit.value).toFixed(2))
     }

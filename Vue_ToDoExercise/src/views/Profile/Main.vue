@@ -6,10 +6,22 @@ import { useUserApiStore } from '@/stores/useUserApiStore'
 import { useUiStore } from '@/stores/useUiStore'
 import SecurityQuestionChange from '@/components/layout/SecurityQuestionChange.vue'
 import PasswordChange from '@/components/layout/PasswordChange.vue'
+import { onMounted } from 'vue'
+import { validProfileData } from '@/utils/valid'
+import router from '@/router'
 
 const uiStore = useUiStore()
 const authStore = useAuthStore()
 const ApiStore = useUserApiStore()
+
+// router guard 或某個 middleware
+authStore.resetModifyUser() // ← 在 onMounted 之前就執行！
+
+// onMounted(() => {
+//   console.log(authStore.userData)
+//   authStore.resetModifyUser()
+//   console.log(authStore.modifyUser)
+// })
 
 async function submitForm(event: Event) {
   const form = event.target as HTMLFormElement
@@ -19,7 +31,8 @@ async function submitForm(event: Event) {
     return
   }
   uiStore.showLoading()
-  await ApiStore.updateProfile()
+  const updateData = validProfileData(authStore.modifyUser)
+  await authStore.doUpdateProfile(updateData)
   uiStore.hideLoading()
 }
 </script>
@@ -33,7 +46,7 @@ async function submitForm(event: Event) {
           id="nickname"
           type="text"
           placeholder="請輸入您的暱稱"
-          v-model="authStore.nickname"
+          v-model="authStore.modifyUser.nickname"
         />
       </div>
       <div class="col-12 col-md-6 mb-3">
@@ -42,7 +55,7 @@ async function submitForm(event: Event) {
           id="weight"
           type="number"
           placeholder="請輸入您的體重"
-          v-model="authStore.weight"
+          v-model="authStore.modifyUser.weight"
         />
       </div>
       <div class="col-12 mb-3 text-center">

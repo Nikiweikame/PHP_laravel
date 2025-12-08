@@ -38,7 +38,7 @@ async function submitForm(event: Event) {
           id="account"
           type="text"
           placeholder="請輸入您的帳號"
-          v-model="authStore.registerForm.user_id"
+          v-model="authStore.registerForm.account"
         />
       </div>
       <div class="col-12 col-md-6 mb-3">

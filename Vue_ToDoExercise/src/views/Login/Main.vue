@@ -23,7 +23,7 @@ function toggle() {
 const DialogShow = ref(false)
 async function showDialog() {
   uiStore.showLoading()
-  authStore.reset()
+  authStore.resetForgetPasswordForm()
   await ApiStore.getSecurityQuestions()
   uiStore.toggleForgetPasswordModel()
   uiStore.hideLoading()
@@ -51,7 +51,7 @@ async function submitForm(event: Event) {
             name="account"
             class="login-card__input"
             placeholder="使用者帳號"
-            v-model="authStore.loginForm.user_id"
+            v-model="authStore.loginForm.account"
             required
           />
         </div>
