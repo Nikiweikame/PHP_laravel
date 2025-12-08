@@ -24,7 +24,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|string',
+            'account' => 'required|string',
             'password' => 'required|string|min:6',
         ];
     }
@@ -32,7 +32,7 @@ class LoginRequest extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => '請輸入帳號',
+            'account.required' => '請輸入帳號',
             'password.required' => '請輸入密碼',
             'password.min' => '密碼至少 6 個字元',
         ];
@@ -44,7 +44,7 @@ class LoginRequest extends FormRequest
 
     public function getUserId(): string
     {
-        return $this->input('user_id');
+        return $this->input('account');
     }
 
     public function getPassword(): string

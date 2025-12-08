@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -74,7 +75,7 @@ class AuthController extends Controller
     {
         // 簡單邏輯就不放到 Service 了
         $user = User::create([
-            'user_id' => $request->user_id,
+            'user_id' => $request->account,
             'password' => bcrypt($request->password),
             'nickname' => $request->nickname,
             'weight' => $request->weight ?? 60.0,

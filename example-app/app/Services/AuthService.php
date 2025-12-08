@@ -181,7 +181,7 @@ class AuthService
         return [
             'success' => true,
             'message' => '資料更新成功',
-            'data' => $user,
+            'data' => new UserResource($user),
         ];
     }
 

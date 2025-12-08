@@ -24,7 +24,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|string|max:50|unique:users,user_id',
+            'account' => 'required|string|max:50|unique:users,user_id',
             'password' => 'required|string|min:6',
             'nickname' => 'required|string|max:50',
             'weight' => 'nullable|numeric|min:0',
@@ -36,8 +36,8 @@ class RegisterRequest extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => '請輸入帳號',
-            'user_id.unique' => '帳號已經被註冊',
+            'account.required' => '請輸入帳號',
+            'account.unique' => '帳號已經被註冊',
             'password.required' => '請輸入密碼',
             'password.min' => '密碼至少 6 個字元',
             'security_question_id.required' => '請輸入安全提問',
@@ -51,7 +51,7 @@ class RegisterRequest extends FormRequest
 
     public function getUserId(): string
     {
-        return $this->input('user_id');
+        return $this->input('account');
     }
 
     public function getPassword(): string

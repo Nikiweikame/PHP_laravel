@@ -5,6 +5,8 @@
 namespace App\Exceptions;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
+
 
 // 判斷為過度設計，建議不使用
 class RegisterFailedException extends Exception
